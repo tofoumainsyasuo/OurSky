@@ -1,0 +1,14 @@
+{
+  "name": "a sky for the two of us",
+  "short_name": "our sky",
+  "description": "Every time we miss each other, a star.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#05040d",
+  "theme_color": "#05040d",
+  "icons": [
+    { "src": "icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ]
+}
