@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05040d">
+<meta name="color-scheme" content="dark">
+<title>a sky for the two of us</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="our sky">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05040d;
+    --deep:#100c26;
+    --horizon:#241f45;
+    --gold:#f0c169;
+    --rose:#dd8291;
+    --moonlight:#f5f2fb;
+    --dim:rgba(245,242,251,0.55);
+    --glass-border:rgba(245,242,251,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 18% -10%, var(--horizon), transparent 55%),
+      radial-gradient(ellipse at 88% 108%, var(--horizon), transparent 50%),
+      linear-gradient(180deg, var(--deep), var(--void) 72%);
+    color:var(--moonlight);
+    font-family:'Manrope', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    opacity:0;
+    animation:pageIn 0.9s ease forwards;
+  }
+  button, input, select{font-family:inherit; color:inherit; -webkit-tap-highlight-color:transparent;}
+  @keyframes pageIn{ to{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    body{animation:none; opacity:1;}
+  }
+
+  /* ---------- fixed cosmic layers ---------- */
+  .nebula{
+    position:fixed;
+    width:56vmax; height:56vmax;
+    border-radius:50%;
+    filter:blur(80px);
+    mix-blend-mode:screen;
+    pointer-events:none;
+    will-change:transform;
+  }
+  #nebulaA{
+    top:-16vmax; right:-14vmax;
+    background:radial-gradient(circle, var(--gold) 0%, transparent 68%);
+    opacity:0.12;
+    animation:driftA 66s ease-in-out infinite;
+    z-index:1;
+  }
+  #nebulaB{
+    bottom:-18vmax; left:-16vmax;
+    background:radial-gradient(circle, var(--rose) 0%, transparent 68%);
+    opacity:0.12;
+    animation:driftB 78s ease-in-out infinite;
+    z-index:1;
+  }
+  @keyframes driftA{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-4%,5%) scale(1.08);} }
+  @keyframes driftB{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(5%,-4%) scale(1.07);} }
+  @media (prefers-reduced-motion: reduce){
+    .nebula{animation:none !important;}
+  }
+
+  #sky{
+    position:fixed; inset:0;
+    width:100%; height:100%;
+    display:block;
+    z-index:2;
+    cursor:default;
+  }
+
+  .grain{
+    position:fixed; inset:0; z-index:3; pointer-events:none;
+    opacity:0.035;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:140px 140px;
+  }
+
+  /* ---------- content ---------- */
+  .content{position:relative; z-index:10;}
+
+  .hero{
+    min-height:100vh;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:8vh clamp(1.5rem,6vw,4rem) clamp(130px,17vh,190px);
+    max-width:44rem;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.24em;
+    text-transform:uppercase;
+    color:var(--dim);
+    margin-bottom:1.1rem;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:clamp(2.1rem, 5.8vw, 3.5rem);
+    line-height:1.14;
+    letter-spacing:-0.01em;
+    max-width:19ch;
+  }
+  h1 .accent{
+    font-style:italic;
+    font-weight:600;
+    color:var(--gold);
+  }
+  .lede{
+    margin-top:1.1rem;
+    max-width:28rem;
+    color:var(--dim);
+    font-size:1rem;
+    line-height:1.6;
+  }
+  #stats{
+    margin-top:1.6rem;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--dim);
+  }
+  .eyebrow, h1, .lede, #stats{ transition:opacity 0.3s ease; }
+  .hero.text-hidden .eyebrow,
+  .hero.text-hidden h1,
+  .hero.text-hidden .lede,
+  .hero.text-hidden #stats{
+    opacity:0;
+    pointer-events:none;
+  }
+
+  /* ---------- top-right menu ---------- */
+  .menu-btn{
+    position:fixed; top:16px; right:16px;
+    width:34px; height:34px;
+    border-radius:50%;
+    border:1px solid var(--glass-border);
+    background:rgba(16,12,38,0.55);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    color:var(--dim);
+    font-size:1.1rem;
+    line-height:1;
+    cursor:pointer;
+    z-index:20;
+    transition:color 0.15s ease, background 0.15s ease;
+  }
+  .menu-btn:hover{color:var(--moonlight); background:rgba(16,12,38,0.75);}
+  .menu-panel{
+    position:fixed; top:56px; right:16px;
+    width:210px;
+    background:rgba(16,12,38,0.92);
+    border:1px solid var(--glass-border);
+    border-radius:14px;
+    padding:0.4rem;
+    box-shadow:0 14px 40px rgba(0,0,0,0.45);
+    opacity:0; transform:translateY(-6px);
+    pointer-events:none;
+    transition:opacity 0.16s ease, transform 0.16s ease;
+    z-index:21;
+  }
+  .menu-panel.show{opacity:1; transform:translateY(0); pointer-events:auto;}
+  .menu-item{
+    display:flex; align-items:center; justify-content:space-between;
+    width:100%;
+    background:none; border:none;
+    font-size:0.85rem;
+    text-align:left;
+    padding:0.55rem 0.6rem;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  button.menu-item:hover{background:rgba(245,242,251,0.06);}
+  .menu-toggle-row{cursor:default;}
+  .sound-toggle{
+    width:34px; height:20px;
+    border-radius:999px;
+    background:rgba(245,242,251,0.14);
+    border:none;
+    position:relative;
+    cursor:pointer;
+    flex-shrink:0;
+    transition:background 0.15s ease;
+  }
+  .sound-toggle::after{
+    content:"";
+    position:absolute; top:2px; left:2px;
+    width:16px; height:16px;
+    border-radius:50%;
+    background:var(--moonlight);
+    transition:transform 0.15s ease;
+  }
+  .sound-toggle.on{background:var(--gold);}
+  .sound-toggle.on::after{transform:translateX(14px);}
+
+  /* ---------- modal (milestones) ---------- */
+  .modal-backdrop{
+    position:fixed; inset:0;
+    background:rgba(5,4,13,0.72);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    padding:1.5rem;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.2s ease;
+    z-index:40;
+  }
+  .modal-backdrop.show{opacity:1; pointer-events:auto;}
+  .modal-card{
+    width:min(92vw,420px);
+    max-height:80vh;
+    overflow-y:auto;
+    background:rgba(16,12,38,0.94);
+    border:1px solid var(--glass-border);
+    border-radius:20px;
+    padding:1.4rem;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+    transform:translateY(10px) scale(0.98);
+    transition:transform 0.2s ease;
+  }
+  .modal-backdrop.show .modal-card{transform:translateY(0) scale(1);}
+  .modal-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;}
+  .modal-header h3{font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:1.15rem;}
+
+  .identity-sub{color:var(--dim); font-size:0.85rem; margin-bottom:1.1rem;}
+  .identity-choices{display:flex; gap:0.7rem;}
+  .identity-btn{
+    flex:1;
+    padding:0.9rem;
+    border-radius:14px;
+    border:1px solid var(--glass-border);
+    background:rgba(245,242,251,0.05);
+    font-weight:600;
+    font-size:0.95rem;
+    cursor:pointer;
+    transition:background 0.15s ease, border-color 0.15s ease;
+  }
+  .identity-btn.gold{color:var(--gold);}
+  .identity-btn.rose{color:var(--rose);}
+  .identity-btn.gold:hover{background:rgba(245,242,251,0.1); border-color:rgba(240,193,105,0.4);}
+  .identity-btn.rose:hover{background:rgba(245,242,251,0.1); border-color:rgba(221,130,145,0.4);}
+  .modal-close{background:none; border:none; color:var(--dim); font-size:1.5rem; cursor:pointer; line-height:1; padding:0.2rem 0.4rem;}
+  .modal-close:hover{color:var(--moonlight);}
+
+  .milestone-list{margin-bottom:1.1rem; max-height:220px; overflow-y:auto;}
+  .milestone-item{display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0; border-bottom:1px solid rgba(245,242,251,0.08); font-size:0.88rem;}
+  .milestone-item:last-child{border-bottom:none;}
+  .milestone-date{font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--gold); flex-shrink:0; width:3.6rem;}
+  .milestone-label{flex:1;}
+  .milestone-delete{background:none; border:none; color:var(--dim); cursor:pointer; font-size:1rem; padding:0.2rem 0.4rem; flex-shrink:0;}
+  .milestone-delete:hover{color:var(--rose);}
+  .milestone-empty{color:var(--dim); font-style:italic; font-size:0.85rem; padding:0.5rem 0;}
+
+  .milestone-repeat-toggle{display:flex; gap:0.4rem; flex:1 1 100%; margin-bottom:0.2rem;}
+  .repeat-option{
+    flex:1;
+    padding:0.5rem;
+    border-radius:8px;
+    border:1px solid var(--glass-border);
+    background:rgba(245,242,251,0.04);
+    color:var(--dim);
+    font-size:0.8rem;
+    cursor:pointer;
+    transition:background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .repeat-option.active{
+    background:rgba(240,193,105,0.12);
+    border-color:rgba(240,193,105,0.4);
+    color:var(--gold);
+  }
+  .milestone-form{display:flex; gap:0.4rem; flex-wrap:wrap;}
+  .milestone-form select, .milestone-form input[type="number"]{
+    background:rgba(245,242,251,0.06); border:1px solid var(--glass-border); border-radius:8px;
+    padding:0.45rem 0.5rem; font-size:0.85rem;
+  }
+  .milestone-form select{flex:1.4;}
+  .milestone-form input[type="number"]{width:4.2rem;}
+  .milestone-form input[type="text"]{
+    flex:1 1 100%;
+    background:rgba(245,242,251,0.06); border:1px solid var(--glass-border); border-radius:8px;
+    padding:0.5rem 0.65rem; font-size:0.88rem;
+  }
+  .milestone-form input::placeholder{color:rgba(245,242,251,0.35);}
+  .milestone-form option{background:#100c26;}
+  .milestone-form-error{
+    flex:1 1 100%;
+    display:none;
+    color:var(--rose);
+    font-size:0.78rem;
+  }
+  .milestone-form-error.show{display:block;}
+  .milestone-form button[type="submit"]{
+    flex:1 1 100%;
+    background:var(--gold); color:var(--void); border:none; border-radius:10px;
+    padding:0.6rem; font-weight:600; font-size:0.88rem; cursor:pointer;
+    margin-top:0.2rem;
+  }
+
+  /* ---------- floating dock ---------- */
+  .dock{
+    position:fixed;
+    left:50%; bottom:clamp(16px,3vh,28px);
+    transform:translateX(-50%);
+    display:flex;
+    align-items:stretch;
+    width:min(90vw,400px);
+    border-radius:999px;
+    overflow:hidden;
+    background:rgba(16,12,38,0.62);
+    backdrop-filter:blur(22px) saturate(160%);
+    -webkit-backdrop-filter:blur(22px) saturate(160%);
+    border:1px solid var(--glass-border);
+    box-shadow:0 10px 40px rgba(5,4,13,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+    z-index:20;
+  }
+  .tap{
+    flex:1 1 0;
+    position:relative;
+  }
+  .tap.gold{--flash:var(--gold);}
+  .tap.rose{--flash:var(--rose);}
+  .tap.cooling .tap-main{opacity:0.45;}
+  .tap.cooling .tap-note{opacity:0.25; pointer-events:none;}
+  .tap-main{
+    width:100%; height:100%;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:0.18rem;
+    padding:0.9rem 1rem 0.85rem;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    touch-action:manipulation;
+    transition:background 0.2s ease, transform 0.12s ease, opacity 0.2s ease;
+  }
+  .tap-main:hover{background:rgba(245,242,251,0.05);}
+  .tap-main:active{transform:scale(0.96);}
+  .tap-main:focus-visible{outline:2px solid var(--flash); outline-offset:-4px;}
+  .tap-main::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle, var(--flash) 0%, transparent 70%);
+    opacity:0;
+    pointer-events:none;
+  }
+  .tap-main.flash::after{animation:flashPulse 0.6s ease-out;}
+  @keyframes flashPulse{ 0%{opacity:0.55; transform:scale(0.3);} 100%{opacity:0; transform:scale(1.5);} }
+  @keyframes shakeNo{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-4px);}
+    40%{transform:translateX(4px);}
+    60%{transform:translateX(-3px);}
+    80%{transform:translateX(3px);}
+  }
+  .tap-main.shake{animation:shakeNo 0.4s ease;}
+  .tap-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.62rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--dim);
+  }
+  .tap.gold .tap-tag, .tap.gold .tap-count{color:var(--gold);}
+  .tap.rose .tap-tag, .tap.rose .tap-count{color:var(--rose);}
+  .tap-label{
+    font-weight:600;
+    font-size:0.92rem;
+    color:var(--moonlight);
+  }
+  .tap-count{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+  }
+  .dock-divider{width:1px; margin:0.6rem 0; background:var(--glass-border);}
+
+  .tap-note{
+    position:absolute; top:6px;
+    width:20px; height:20px;
+    border-radius:50%;
+    border:none;
+    background:rgba(245,242,251,0.08);
+    color:var(--dim);
+    font-size:0.8rem;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    z-index:2;
+    transition:background 0.15s ease, color 0.15s ease, opacity 0.2s ease;
+  }
+  .tap-note:hover, .tap-note:focus-visible{background:rgba(245,242,251,0.18); color:var(--moonlight);}
+  .tap.gold .tap-note{right:8px;}
+  .tap.rose .tap-note{left:8px;}
+
+  /* ---------- note composer ---------- */
+  .composer{
+    position:fixed;
+    left:50%;
+    bottom:calc(clamp(16px,3vh,28px) + 78px);
+    transform:translateX(-50%) translateY(6px);
+    width:min(90vw,400px);
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+    background:rgba(16,12,38,0.8);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--glass-border);
+    border-radius:18px;
+    padding:0.5rem 0.6rem 0.5rem 0.9rem;
+    box-shadow:0 10px 30px rgba(5,4,13,0.5);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s ease, transform 0.2s ease;
+    z-index:25;
+  }
+  .composer.show{opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0);}
+  .composer.gold{border-color:rgba(240,193,105,0.35);}
+  .composer.rose{border-color:rgba(221,130,145,0.35);}
+  .composer-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.62rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--dim);
+    flex-shrink:0;
+  }
+  .composer input{
+    flex:1; min-width:0;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--moonlight);
+    font-size:0.88rem;
+  }
+  .composer input::placeholder{color:rgba(245,242,251,0.35);}
+  .composer-send{
+    width:28px; height:28px;
+    border-radius:50%;
+    border:none;
+    background:rgba(245,242,251,0.1);
+    color:var(--moonlight);
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.95rem;
+    transition:background 0.15s ease;
+  }
+  .composer-send:hover{background:rgba(245,242,251,0.18);}
+
+  /* ---------- log ---------- */
+  .log-panel{
+    position:relative;
+    background:linear-gradient(to bottom, transparent, rgba(16,12,38,0.72) 10%, rgba(16,12,38,0.72) 100%);
+    backdrop-filter:blur(28px);
+    -webkit-backdrop-filter:blur(28px);
+    border-top:1px solid rgba(245,242,251,0.08);
+    padding:clamp(3rem,8vh,5rem) clamp(1.5rem,6vw,4rem) 2rem;
+  }
+  .log-inner{max-width:38rem; margin:0 auto;}
+  .log-header{display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.4rem;}
+  .log-header h2{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:1.25rem;
+    color:rgba(245,242,251,0.9);
+  }
+  #logSearch{
+    background:rgba(245,242,251,0.06);
+    border:1px solid var(--glass-border);
+    border-radius:999px;
+    padding:0.4rem 0.9rem;
+    font-size:0.8rem;
+    width:100px;
+    transition:width 0.2s ease, border-color 0.2s ease;
+  }
+  #logSearch:focus{width:150px; outline:none; border-color:rgba(245,242,251,0.3);}
+  #logSearch::placeholder{color:rgba(245,242,251,0.35);}
+
+  .day-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:rgba(240,193,105,0.75);
+    margin:1.5rem 0 0.5rem;
+  }
+  .day-label:first-child{margin-top:0;}
+  .entry{
+    display:flex;
+    align-items:center;
+    gap:0.7rem;
+    padding:0.45rem 0;
+    font-size:0.92rem;
+  }
+  .dot{width:6px; height:6px; border-radius:50%; flex-shrink:0;}
+  .dot.gold{background:var(--gold); box-shadow:0 0 6px var(--gold);}
+  .dot.rose{background:var(--rose); box-shadow:0 0 6px var(--rose);}
+  .who{font-weight:500; color:rgba(245,242,251,0.88);}
+  .when{
+    margin-left:auto;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.74rem;
+    color:var(--dim);
+  }
+  .entry-note{
+    font-size:0.82rem;
+    font-style:italic;
+    color:var(--dim);
+    padding:0 0 0.35rem 1.3rem;
+    margin-top:-0.15rem;
+  }
+  .entry-note.milestone{color:var(--gold); font-style:normal; font-weight:500;}
+  .empty{
+    color:var(--dim);
+    font-style:italic;
+    font-size:0.92rem;
+    padding:0.5rem 0 1rem;
+  }
+
+  footer{
+    position:relative;
+    text-align:center;
+    padding:1.5rem 1.5rem clamp(110px,15vh,160px);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.66rem;
+    letter-spacing:0.08em;
+    color:rgba(245,242,251,0.28);
+    background:rgba(16,12,38,0.72);
+  }
+
+  /* ---------- star tooltip ---------- */
+  #starTip{
+    position:fixed; left:0; top:0;
+    transform:translate(-50%,-135%);
+    background:rgba(16,12,38,0.88);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    color:var(--moonlight);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.02em;
+    padding:0.45rem 0.7rem;
+    border-radius:10px;
+    white-space:normal;
+    max-width:230px;
+    text-align:center;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity 0.18s ease, transform 0.18s ease;
+    z-index:30;
+  }
+  #starTip.show{opacity:1; transform:translate(-50%,-148%);}
+  .tip-note{display:block; margin-top:0.25rem; font-style:italic; opacity:0.85;}
+  .tip-milestone{display:block; margin-top:0.25rem; color:var(--gold); font-weight:500;}
+
+  #cooldownHint{
+    position:fixed;
+    left:50%;
+    bottom:calc(clamp(16px,3vh,28px) + 78px);
+    transform:translateX(-50%) translateY(6px);
+    background:rgba(16,12,38,0.88);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    color:var(--moonlight);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    padding:0.5rem 1rem;
+    border-radius:999px;
+    white-space:nowrap;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity 0.18s ease, transform 0.18s ease;
+    z-index:25;
+  }
+  #cooldownHint.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="nebula" id="nebulaA"></div>
+<div class="nebula" id="nebulaB"></div>
+<canvas id="sky"></canvas>
+<div class="grain"></div>
+<div id="starTip"></div>
+<div id="cooldownHint"></div>
+
+<button type="button" class="menu-btn" id="menuBtn" aria-label="More options">⋯</button>
+<div class="menu-panel" id="menuPanel">
+  <button type="button" class="menu-item" id="menuMilestones">Milestones</button>
+  <button type="button" class="menu-item" id="menuExport">Save sky as image</button>
+  <button type="button" class="menu-item" id="menuNotifications">Notifications</button>
+  <button type="button" class="menu-item" id="menuToggleText">Hide text</button>
+  <div class="menu-item menu-toggle-row">
+    <span>Sound</span>
+    <button type="button" class="sound-toggle" id="soundToggle" role="switch" aria-checked="false" aria-label="Toggle sound"></button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="identityBackdrop">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>which one are you?</h3>
+    </div>
+    <p class="identity-sub">So notifications land on the right phone.</p>
+    <div class="identity-choices">
+      <button type="button" class="identity-btn gold" id="identityA">Inno</button>
+      <button type="button" class="identity-btn rose" id="identityB">Yuki</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="milestonesBackdrop">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>milestones</h3>
+      <button type="button" class="modal-close" id="milestonesClose" aria-label="Close">×</button>
+    </div>
+    <div class="milestone-list" id="milestoneList"></div>
+    <form class="milestone-form" id="milestoneForm">
+      <div class="milestone-repeat-toggle">
+        <button type="button" class="repeat-option active" data-type="annual">Every year</button>
+        <button type="button" class="repeat-option" data-type="monthly">Every month</button>
+      </div>
+      <select id="msMonth" aria-label="Month">
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
+      </select>
+      <input type="number" id="msDay" min="1" max="31" placeholder="Day" aria-label="Day">
+      <input type="text" id="msLabel" placeholder="e.g. Our anniversary" maxlength="60" aria-label="Label">
+      <p class="milestone-form-error" id="milestoneFormError"></p>
+      <button type="submit">Add milestone</button>
+    </form>
+  </div>
+</div>
+
+<div class="composer" id="composer">
+  <span class="composer-tag" id="composerTag"></span>
+  <input type="text" id="composerInput" placeholder="what's the reason? (optional)" maxlength="140" autocomplete="off" enterkeyhint="done">
+  <button type="button" class="composer-send" id="composerSend" aria-label="Save">→</button>
+</div>
+
+<div class="content">
+  <div class="hero">
+    <div class="eyebrow">a sky for the two of us</div>
+    <h1>Instead of saying <span class="accent">I miss you</span> every time, I'm filling the sky with stars.</h1>
+    <p class="lede">Real stars take millions of years and way more energy than seems fair. Not ours, though — all it takes is a button press, with a lot of meaning behind it.</p>
+    <div id="stats"></div>
+  </div>
+
+  <div class="log-panel">
+    <div class="log-inner">
+      <div class="log-header">
+        <h2>the log</h2>
+        <input type="text" id="logSearch" placeholder="search..." aria-label="Search the log">
+      </div>
+      <div id="timeline"></div>
+    </div>
+  </div>
+
+  <footer>by your favorite spouse, inno</footer>
+</div>
+
+<div class="dock" role="group" aria-label="Log a missed-you moment">
+  <div class="tap gold" id="tapA">
+    <button type="button" class="tap-main" id="btnA">
+      <span class="tap-tag">Inno</span>
+      <span class="tap-label">I miss you</span>
+      <span class="tap-count" id="countA">0</span>
+    </button>
+    <button type="button" class="tap-note" id="noteA" aria-label="Add a note for this one">+</button>
+  </div>
+  <div class="dock-divider" aria-hidden="true"></div>
+  <div class="tap rose" id="tapB">
+    <button type="button" class="tap-main" id="btnB">
+      <span class="tap-tag">Yuki</span>
+      <span class="tap-label">I miss you</span>
+      <span class="tap-count" id="countB">0</span>
+    </button>
+    <button type="button" class="tap-note" id="noteB" aria-label="Add a note for this one">+</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js';
+import { getDatabase, ref, push, set, get, remove, onValue } from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js';
+import { getMessaging, getToken, deleteToken, isSupported as isMessagingSupported } from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-messaging.js';
+
+/* ============================================================
+   DATA LAYER
+   Shared between both of you via Firebase Realtime Database —
+   whoever taps, both phones see it live, no refresh needed.
+   ============================================================ */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDo6kwf9QtiLXCelZDSy_a6ktv6mTC6fa4",
+  authDomain: "oursky-1b847.firebaseapp.com",
+  databaseURL: "https://oursky-1b847-default-rtdb.firebaseio.com",
+  projectId: "oursky-1b847",
+  storageBucket: "oursky-1b847.firebasestorage.app",
+  messagingSenderId: "1029333881661",
+  appId: "1:1029333881661:web:0ffef5df392bc984c7ab54"
+};
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getDatabase(firebaseApp);
+const VAPID_KEY = 'BKdUIn5WPTfKf1NxJJitG8gKWHA_MmRL2JmzAgMMPS-aUrY0yTCgz5Ex9jvAPHlHWm_YzWo-LuaYrNlyW-y35vk';
+
+const SOUND_KEY = "missedyou_sound";
+const TEXT_HIDDEN_KEY = "missedyou_text_hidden";
+
+function saveEntry(who, note, milestoneLabel, milestoneId, countLabel, knownTime){
+  const entryData = {
+    who,
+    time: knownTime,
+    note: (note||'').trim(),
+    milestoneLabel: milestoneLabel || '',
+    milestoneId: milestoneId || '',
+    countLabel: countLabel || ''
+  };
+  set(push(ref(db, 'entries')), entryData).catch(err=>{
+    console.error('Failed to save entry:', err);
+  });
+}
+
+/* One-time bridge: if this device has old local-only entries from
+   before the shared database existed, and the shared database is
+   still empty, carry them over instead of losing them. Only the
+   first device to load after this update runs this — that's fine,
+   this was just local testing data anyway. */
+async function migrateOldLocalData(){
+  let oldEntries = [];
+  try{ oldEntries = JSON.parse(localStorage.getItem('missedyou_entries')) || []; }
+  catch(e){ oldEntries = []; }
+  if(oldEntries.length > 0){
+    const snap = await get(ref(db, 'entries'));
+    if(!snap.exists()){
+      for(const entry of oldEntries){
+        await set(push(ref(db, 'entries')), entry);
+      }
+    }
+    localStorage.removeItem('missedyou_entries');
+  }
+
+  let oldMs = [];
+  try{ oldMs = JSON.parse(localStorage.getItem('missedyou_milestones')) || []; }
+  catch(e){ oldMs = []; }
+  if(oldMs.length > 0){
+    const snap = await get(ref(db, 'milestones'));
+    if(!snap.exists()){
+      for(const m of oldMs){
+        await set(push(ref(db, 'milestones')), { month: m.month, day: m.day, label: m.label });
+      }
+    }
+    localStorage.removeItem('missedyou_milestones');
+  }
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+
+const canvas = document.getElementById('sky');
+const ctx = canvas.getContext('2d');
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let W = 0, H = 0;
+let stars = [];
+let entriesCache = [];
+let milestonesCache = [];
+let smooth = { x: 0, y: 0 };
+let target = { x: 0, y: 0 };
+let growTimes = new Map();
+let travelingSparks = [];
+let shootingStar = { active:false, x1:0,y1:0,x2:0,y2:0, start:0, duration:900 };
+let tipTimeout = null;
+let composerWho = null;
+let searchTerm = '';
+let soundEnabled = localStorage.getItem(SOUND_KEY) === 'on';
+let audioCtx = null;
+let textHidden = localStorage.getItem(TEXT_HIDDEN_KEY) === 'on';
+
+/* Whoever's names go here show up everywhere — the dock, the
+   log, star tooltips, the note composer. Change them any time. */
+const NAME_A = 'Inno';
+const NAME_B = 'Yuki';
+function nameFor(who){ return who === 'A' ? NAME_A : NAME_B; }
+
+const COOLDOWN_MS = 2 * 60 * 1000;
+let lastTapAt = { A: 0, B: 0 };
+
+const btnA = document.getElementById('btnA');
+const btnB = document.getElementById('btnB');
+const tapA = document.getElementById('tapA');
+const tapB = document.getElementById('tapB');
+const noteA = document.getElementById('noteA');
+const noteB = document.getElementById('noteB');
+const nebulaA = document.getElementById('nebulaA');
+const nebulaB = document.getElementById('nebulaB');
+const composer = document.getElementById('composer');
+const composerInput = document.getElementById('composerInput');
+const composerTag = document.getElementById('composerTag');
+const composerSend = document.getElementById('composerSend');
+const menuBtn = document.getElementById('menuBtn');
+const menuPanel = document.getElementById('menuPanel');
+const soundToggle = document.getElementById('soundToggle');
+const menuToggleText = document.getElementById('menuToggleText');
+const heroEl = document.querySelector('.hero');
+const milestonesBackdrop = document.getElementById('milestonesBackdrop');
+const identityBackdrop = document.getElementById('identityBackdrop');
+const logSearch = document.getElementById('logSearch');
+
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const COUNT_MILESTONES = new Set([10,25,50,100,150,200,250,300,365,500,750,1000]);
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+function seededRandom(seed){
+  const x = Math.sin(seed * 999.7) * 10000;
+  return x - Math.floor(x);
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function getMoonPhase(date){
+  const synodicMonth = 29.530588853;
+  const knownNewMoon = Date.UTC(2000,0,6,18,14,0);
+  const diffDays = (date.getTime() - knownNewMoon) / 86400000;
+  let phase = (diffDays % synodicMonth) / synodicMonth;
+  if(phase < 0) phase += 1;
+  return phase;
+}
+const moonPhase = getMoonPhase(new Date());
+
+const GOLD_RGB = [240,193,105];
+const ROSE_RGB = [221,130,145];
+const MOONLIGHT_RGB = [245,242,251];
+
+function lerpColor(a, b, t){
+  return 'rgb(' +
+    Math.round(a[0]+(b[0]-a[0])*t) + ',' +
+    Math.round(a[1]+(b[1]-a[1])*t) + ',' +
+    Math.round(a[2]+(b[2]-a[2])*t) + ')';
+}
+
+function countMilestoneLabel(n){
+  if(COUNT_MILESTONES.has(n)) return n + 'th star';
+  if(n > 1000 && n % 500 === 0) return n + 'th star';
+  return '';
+}
+
+function findTodayMilestone(milestones, date){
+  const m = date.getMonth()+1, d = date.getDate();
+  return milestones.find(ms => {
+    if(ms.type === 'monthly') return ms.day === d;
+    return ms.month === m && ms.day === d;
+  }) || null;
+}
+function milestonePeriodKey(milestone, date){
+  if(milestone.type === 'monthly') return date.getFullYear() + '-' + (date.getMonth()+1);
+  return String(date.getFullYear());
+}
+function milestoneAlreadyClaimed(entries, milestone, date){
+  const periodKey = milestonePeriodKey(milestone, date);
+  return entries.some(e => {
+    if(e.milestoneId !== milestone.id) return false;
+    return milestonePeriodKey(milestone, new Date(e.time)) === periodKey;
+  });
+}
+
+function computeLastTapTimes(entries){
+  const result = { A:0, B:0 };
+  entries.forEach(e=>{ if(e.time > result[e.who]) result[e.who] = e.time; });
+  return result;
+}
+function canTap(who){
+  return (Date.now() - lastTapAt[who]) >= COOLDOWN_MS;
+}
+function cooldownRemaining(who){
+  return Math.max(0, COOLDOWN_MS - (Date.now() - lastTapAt[who]));
+}
+function applyCooldownVisual(who){
+  const tapDiv = who === 'A' ? tapA : tapB;
+  const remaining = cooldownRemaining(who);
+  if(remaining <= 0) return;
+  tapDiv.classList.add('cooling');
+  setTimeout(()=>{ tapDiv.classList.remove('cooling'); }, remaining);
+}
+
+let toastTimeout = null;
+function showToast(message, duration){
+  const hint = document.getElementById('cooldownHint');
+  hint.textContent = message;
+  hint.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(()=>hint.classList.remove('show'), duration || 2200);
+}
+
+function showCooldownHint(who){
+  const remaining = cooldownRemaining(who);
+  const mins = Math.floor(remaining/60000);
+  const secs = Math.floor((remaining%60000)/1000);
+  const timeStr = mins > 0 ? (mins+'m '+secs+'s') : (secs+'s');
+  showToast('one sec — try again in ' + timeStr, 1800);
+}
+
+/* Every tap becomes one star. Size, brightness, twinkle and
+   depth (parallax) are each drawn independently per star.
+   Milestone / count-milestone stars override this with a
+   fixed bright, steady, flared treatment so they stand out. */
+function computeStars(entries){
+  const pad = 26;
+  return entries.map((e,i)=>{
+    const isSpecial = !!(e.milestoneLabel || e.countLabel);
+    const sizeF = seededRandom(i*2+10);
+    const brightF = seededRandom(i*2+11);
+    let r = 0.8 + sizeF*sizeF*3.4;
+    let peakAlpha = 0.35 + brightF*0.65;
+    let twinkleAmp = (1-brightF) * 0.32;
+    if(isSpecial){
+      r = 4.6;
+      peakAlpha = 1;
+      twinkleAmp = 0;
+    }
+    const twinklePhase = seededRandom(i*2+12) * Math.PI*2;
+    const twinkleSpeed = 0.3 + seededRandom(i*2+13) * 0.5;
+    const parallax = 5 + sizeF*17;
+    const whoRGB = e.who === 'A' ? GOLD_RGB : ROSE_RGB;
+    const color = isSpecial ? lerpColor(MOONLIGHT_RGB, whoRGB, 1) : lerpColor(MOONLIGHT_RGB, whoRGB, 0.25+brightF*0.75);
+    return {
+      x: pad + seededRandom(i*2+1) * Math.max(1,(W - pad*2)),
+      y: pad + seededRandom(i*2+2) * Math.max(1,(H - pad*2)),
+      who: e.who,
+      time: e.time,
+      note: e.note || '',
+      milestoneLabel: e.milestoneLabel || '',
+      countLabel: e.countLabel || '',
+      isSpecial,
+      r, peakAlpha, twinkleAmp, twinklePhase, twinkleSpeed, parallax, color,
+      bornAt: growTimes.has(e.time) ? growTimes.get(e.time) : -Infinity
+    };
+  });
+}
+
+function starScreenPos(s){
+  return { x: s.x + smooth.x*s.parallax, y: s.y + smooth.y*s.parallax };
+}
+
+/* ============================================================
+   SOUND — a soft two-note chime, synthesized (no audio files)
+   ============================================================ */
+
+function ensureAudioCtx(){
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AC();
+  }
+  return audioCtx;
+}
+function playChime(){
+  if(!soundEnabled) return;
+  const ac = ensureAudioCtx();
+  const now = ac.currentTime;
+  [523.25, 784.0].forEach((freq,i)=>{
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.09, now + 0.02 + i*0.05);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.1 + i*0.05);
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    osc.start(now + i*0.05);
+    osc.stop(now + 1.2 + i*0.05);
+  });
+}
+
+/* ============================================================
+   RENDER — canvas
+   ============================================================ */
+
+function resizeCanvas(){
+  const rect = canvas.getBoundingClientRect();
+  W = rect.width; H = rect.height;
+  canvas.width = W * DPR;
+  canvas.height = H * DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  stars = computeStars(entriesCache);
+  drawFrame(performance.now());
+}
+
+function drawFlare(targetCtx, cx, cy, size, alpha, colorRgb){
+  const armLen = size*3.2;
+  targetCtx.save();
+  targetCtx.globalAlpha = alpha;
+  const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+  dirs.forEach(([dx,dy])=>{
+    const grad = targetCtx.createLinearGradient(cx,cy,cx+dx*armLen,cy+dy*armLen);
+    grad.addColorStop(0, colorRgb);
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    targetCtx.strokeStyle = grad;
+    targetCtx.lineWidth = Math.max(1, size*0.35);
+    targetCtx.beginPath();
+    targetCtx.moveTo(cx,cy);
+    targetCtx.lineTo(cx+dx*armLen, cy+dy*armLen);
+    targetCtx.stroke();
+  });
+  targetCtx.restore();
+}
+
+function drawMoon(){
+  const off = { x: smooth.x*10, y: smooth.y*10 };
+  const mx = W*0.80 + off.x;
+  const my = H*0.20 + off.y;
+  const r = Math.max(24, Math.min(46, Math.min(W,H)*0.055));
+
+  const illum = (1 - Math.cos(moonPhase*2*Math.PI)) / 2;
+
+  const glow = ctx.createRadialGradient(mx,my,0,mx,my,r*3.2);
+  glow.addColorStop(0, 'rgba(245,242,251,' + (0.12+0.30*illum).toFixed(2) + ')');
+  glow.addColorStop(1, 'rgba(245,242,251,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(mx,my,r*3.2,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = '#f2eef9';
+  ctx.beginPath();
+  ctx.arc(mx,my,r,0,Math.PI*2);
+  ctx.fill();
+
+  const magnitude = r * (1 - Math.cos(moonPhase*2*Math.PI));
+  const side = moonPhase < 0.5 ? -1 : 1;
+  const shadowCx = mx + side*magnitude;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(mx,my,r,0,Math.PI*2);
+  ctx.clip();
+  ctx.fillStyle = 'rgba(16,12,38,0.88)';
+  ctx.beginPath();
+  ctx.arc(shadowCx, my, r, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawShootingStar(p){
+  const { x1,y1,x2,y2 } = shootingStar;
+  const headX = x1 + (x2-x1)*p;
+  const headY = y1 + (y2-y1)*p;
+  const tailP = Math.max(0, p-0.14);
+  const tailX = x1 + (x2-x1)*tailP;
+  const tailY = y1 + (y2-y1)*tailP;
+
+  const grad = ctx.createLinearGradient(tailX,tailY,headX,headY);
+  grad.addColorStop(0,'rgba(245,242,251,0)');
+  grad.addColorStop(1,'rgba(245,242,251,0.9)');
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.moveTo(tailX,tailY);
+  ctx.lineTo(headX,headY);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(245,242,251,0.95)';
+  ctx.shadowColor = 'rgba(245,242,251,0.9)';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  ctx.arc(headX,headY,1.6,0,Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function drawFrame(now){
+  if(!reduceMotion){
+    smooth.x += (target.x - smooth.x) * 0.06;
+    smooth.y += (target.y - smooth.y) * 0.06;
+  }
+  ctx.clearRect(0,0,W,H);
+
+  drawMoon();
+
+  const t = now/1000;
+
+  if(stars.length > 1){
+    ctx.strokeStyle = 'rgba(245,242,251,0.14)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    stars.slice(-14).forEach((s,i)=>{
+      const p = starScreenPos(s);
+      if(i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y);
+    });
+    ctx.stroke();
+  }
+
+  stars.forEach(s=>{
+    const grow = Math.min(1, (now - s.bornAt)/550);
+    const eased = 1 - Math.pow(1-grow, 3);
+    if(eased <= 0) return;
+    const twinkle = s.twinkleAmp * Math.sin(t*s.twinkleSpeed + s.twinklePhase);
+    const alpha = Math.max(0.05, Math.min(1, s.peakAlpha + twinkle)) * eased;
+    const rr = s.r * eased;
+    const p = starScreenPos(s);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = s.color;
+    ctx.shadowColor = s.color;
+    ctx.shadowBlur = s.r * s.peakAlpha * 2.4 * eased;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, rr, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+    if(s.isSpecial && eased > 0.4){
+      drawFlare(ctx, p.x, p.y, s.r*eased, eased*0.85, s.color);
+    }
+  });
+
+  if(shootingStar.active){
+    const st = (now - shootingStar.start) / shootingStar.duration;
+    if(st >= 1){ shootingStar.active = false; }
+    else { drawShootingStar(st); }
+  }
+
+  if(travelingSparks.length){
+    travelingSparks = travelingSparks.filter(sp=>{
+      const p = (now - sp.start) / sp.duration;
+      if(p >= 1) return false;
+      const eased = 1 - Math.pow(1-p, 2);
+      const x = sp.x1 + (sp.x2-sp.x1)*eased;
+      const arcLift = Math.sin(p*Math.PI) * 60;
+      const y = sp.y1 + (sp.y2-sp.y1)*eased - arcLift;
+      ctx.fillStyle = sp.color;
+      ctx.shadowColor = sp.color;
+      ctx.shadowBlur = 10;
+      ctx.globalAlpha = Math.min(1, (1-p)*1.4);
+      ctx.beginPath();
+      ctx.arc(x,y,2.4,0,Math.PI*2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+      return true;
+    });
+  }
+}
+
+function loop(now){
+  drawFrame(now);
+  requestAnimationFrame(loop);
+}
+
+function scheduleShootingStar(){
+  const delay = 12000 + Math.random()*20000;
+  setTimeout(()=>{
+    triggerShootingStar();
+    scheduleShootingStar();
+  }, delay);
+}
+function triggerShootingStar(){
+  const x1 = W * (0.08 + Math.random()*0.5);
+  const y1 = H * (0.05 + Math.random()*0.22);
+  const x2 = x1 + W * (0.18 + Math.random()*0.18);
+  const y2 = y1 + H * (0.14 + Math.random()*0.16);
+  shootingStar = { active:true, x1,y1,x2,y2, start: performance.now(), duration: 800+Math.random()*400 };
+}
+
+/* ============================================================
+   EXPORT — flatten current sky to a downloadable PNG
+   ============================================================ */
+
+function exportSnapshot(){
+  const scale = 2;
+  const ec = document.createElement('canvas');
+  ec.width = W*scale; ec.height = H*scale;
+  const ex = ec.getContext('2d');
+  ex.scale(scale, scale);
+
+  const bgGrad = ex.createLinearGradient(0,0,0,H);
+  bgGrad.addColorStop(0, '#100c26');
+  bgGrad.addColorStop(0.72, '#05040d');
+  bgGrad.addColorStop(1, '#05040d');
+  ex.fillStyle = bgGrad;
+  ex.fillRect(0,0,W,H);
+
+  const total = entriesCache.length;
+  const aCount = entriesCache.filter(e=>e.who==='A').length;
+  const shareA = total ? aCount/total : 0;
+  const shareB = total ? (total-aCount)/total : 0;
+
+  function blob(cx,cy,radius,rgb,opacity){
+    const g = ex.createRadialGradient(cx,cy,0,cx,cy,radius);
+    g.addColorStop(0, 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+opacity+')');
+    g.addColorStop(1, 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0)');
+    ex.fillStyle = g;
+    ex.beginPath(); ex.arc(cx,cy,radius,0,Math.PI*2); ex.fill();
+  }
+  blob(W*0.92, H*-0.05, Math.max(W,H)*0.6, GOLD_RGB, 0.1+0.35*shareA);
+  blob(W*0.02, H*1.05, Math.max(W,H)*0.6, ROSE_RGB, 0.1+0.35*shareB);
+
+  const mx = W*0.80, my = H*0.20;
+  const mr = Math.max(24, Math.min(46, Math.min(W,H)*0.055));
+  const illum = (1-Math.cos(moonPhase*2*Math.PI))/2;
+  const mg = ex.createRadialGradient(mx,my,0,mx,my,mr*3.2);
+  mg.addColorStop(0, 'rgba(245,242,251,'+(0.12+0.30*illum).toFixed(2)+')');
+  mg.addColorStop(1, 'rgba(245,242,251,0)');
+  ex.fillStyle = mg;
+  ex.beginPath(); ex.arc(mx,my,mr*3.2,0,Math.PI*2); ex.fill();
+  ex.fillStyle = '#f2eef9';
+  ex.beginPath(); ex.arc(mx,my,mr,0,Math.PI*2); ex.fill();
+  const mmag = mr*(1-Math.cos(moonPhase*2*Math.PI));
+  const mside = moonPhase<0.5 ? -1 : 1;
+  ex.save();
+  ex.beginPath(); ex.arc(mx,my,mr,0,Math.PI*2); ex.clip();
+  ex.fillStyle = 'rgba(16,12,38,0.88)';
+  ex.beginPath(); ex.arc(mx+mside*mmag, my, mr, 0, Math.PI*2); ex.fill();
+  ex.restore();
+
+  if(stars.length > 1){
+    ex.strokeStyle = 'rgba(245,242,251,0.14)';
+    ex.lineWidth = 1;
+    ex.beginPath();
+    stars.slice(-14).forEach((s,i)=>{ if(i===0) ex.moveTo(s.x,s.y); else ex.lineTo(s.x,s.y); });
+    ex.stroke();
+  }
+
+  stars.forEach(s=>{
+    ex.globalAlpha = s.peakAlpha;
+    ex.fillStyle = s.color;
+    ex.shadowColor = s.color;
+    ex.shadowBlur = s.r * s.peakAlpha * 2.4;
+    ex.beginPath();
+    ex.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ex.fill();
+    ex.shadowBlur = 0; ex.globalAlpha = 1;
+    if(s.isSpecial){ drawFlare(ex, s.x, s.y, s.r, 0.85, s.color); }
+  });
+
+  ec.toBlob(b=>{
+    const url = URL.createObjectURL(b);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'our-sky-' + new Date().toISOString().slice(0,10) + '.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  });
+}
+
+/* ============================================================
+   RENDER — DOM
+   ============================================================ */
+
+function dayLabel(ts){
+  const d = new Date(ts);
+  const today = new Date();
+  const yest = new Date(); yest.setDate(yest.getDate()-1);
+  const sameDay = (a,b)=>a.toDateString()===b.toDateString();
+  if(sameDay(d,today)) return 'Today';
+  if(sameDay(d,yest)) return 'Yesterday';
+  return d.toLocaleDateString([], { month:'short', day:'numeric' });
+}
+
+function renderTimeline(entries){
+  const el = document.getElementById('timeline');
+  if(entries.length === 0){
+    el.innerHTML = `<p class="empty">no stars yet — the sky's waiting on the first one.</p>`;
+    return;
+  }
+  const q = searchTerm.trim().toLowerCase();
+  let filtered = entries;
+  if(q){
+    filtered = entries.filter(e=>{
+      const name = nameFor(e.who);
+      const dl = dayLabel(e.time).toLowerCase();
+      const timeStr = new Date(e.time).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }).toLowerCase();
+      const noteStr = (e.note||'').toLowerCase();
+      const msStr = (e.milestoneLabel||'').toLowerCase();
+      return name.includes(q) || dl.includes(q) || timeStr.includes(q) || noteStr.includes(q) || msStr.includes(q);
+    });
+  }
+  if(filtered.length === 0){
+    el.innerHTML = `<p class="empty">nothing matches "${escapeHtml(searchTerm.trim())}"</p>`;
+    return;
+  }
+  const rev = filtered.slice().reverse().slice(0,200);
+  let html = '';
+  let currentLabel = null;
+  rev.forEach(e=>{
+    const label = dayLabel(e.time);
+    if(label !== currentLabel){
+      html += `<div class="day-label">${label}</div>`;
+      currentLabel = label;
+    }
+    const name = nameFor(e.who);
+    const dotClass = e.who === 'A' ? 'gold' : 'rose';
+    const time = new Date(e.time).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+    html += `<div class="entry"><span class="dot ${dotClass}"></span><span class="who">${name}</span><span class="when">${time}</span></div>`;
+    if(e.milestoneLabel){ html += `<div class="entry-note milestone">✦ ${escapeHtml(e.milestoneLabel)}</div>`; }
+    if(e.countLabel){ html += `<div class="entry-note milestone">✦ ${escapeHtml(e.countLabel)}</div>`; }
+    if(e.note){ html += `<div class="entry-note">"${escapeHtml(e.note)}"</div>`; }
+  });
+  el.innerHTML = html;
+}
+
+function startOfDay(ts){
+  const d = new Date(ts);
+  d.setHours(0,0,0,0);
+  return d.getTime();
+}
+
+function computeStreak(entries){
+  const daySet = new Set(entries.map(e=>startOfDay(e.time)));
+  const days = Array.from(daySet).sort((a,b)=>a-b);
+  const oneDay = 86400000;
+  let cursor = startOfDay(Date.now());
+  if(!daySet.has(cursor)) cursor -= oneDay;
+  let current = 0;
+  while(daySet.has(cursor)){ current++; cursor -= oneDay; }
+  return { current, firstDate: new Date(days[0]) };
+}
+
+function renderStats(entries){
+  const el = document.getElementById('stats');
+  if(entries.length === 0){
+    el.textContent = "no stars yet — the first one's waiting below";
+    return;
+  }
+  const { current, firstDate } = computeStreak(entries);
+  const parts = [`${entries.length} ${entries.length===1?'star':'stars'}`];
+  if(current > 0) parts.push(`${current}-day streak`);
+  parts.push('since ' + firstDate.toLocaleDateString([], { month:'short', day:'numeric' }));
+  el.textContent = parts.join(' · ');
+}
+
+function updateDom(entries){
+  const a = entries.filter(e=>e.who==='A').length;
+  const b = entries.length - a;
+  document.getElementById('countA').textContent = a;
+  document.getElementById('countB').textContent = b;
+
+  const total = entries.length;
+  const shareA = total ? a/total : 0;
+  const shareB = total ? b/total : 0;
+  nebulaA.style.opacity = (0.12 + 0.38*shareA).toFixed(2);
+  nebulaB.style.opacity = (0.12 + 0.38*shareB).toFixed(2);
+
+  renderStats(entries);
+  renderTimeline(entries);
+}
+
+/* ============================================================
+   INTERACTION
+   ============================================================ */
+
+function flashButton(who){
+  const btn = who === 'A' ? btnA : btnB;
+  btn.classList.remove('flash');
+  void btn.offsetWidth;
+  btn.classList.add('flash');
+}
+function shakeButton(who){
+  const btn = who === 'A' ? btnA : btnB;
+  btn.classList.remove('shake');
+  void btn.offsetWidth;
+  btn.classList.add('shake');
+}
+
+function onTap(who, note){
+  if(!canTap(who)){
+    shakeButton(who);
+    showCooldownHint(who);
+    return;
+  }
+  lastTapAt[who] = Date.now();
+  applyCooldownVisual(who);
+
+  const now = new Date();
+  const milestoneMatch = findTodayMilestone(milestonesCache, now);
+  let milestoneLabel = '', milestoneId = '';
+  if(milestoneMatch && !milestoneAlreadyClaimed(entriesCache, milestoneMatch, now)){
+    milestoneLabel = milestoneMatch.label;
+    milestoneId = milestoneMatch.id;
+  }
+  const predictedIndex = entriesCache.length;
+  const newCount = predictedIndex + 1;
+  const countLabel = countMilestoneLabel(newCount);
+  const entryTime = Date.now();
+
+  saveEntry(who, note, milestoneLabel, milestoneId, countLabel, entryTime);
+
+  // Predict where this star will land, using the same formula
+  // computeStars() uses, so the spark can fly there immediately
+  // instead of waiting on the round-trip to confirm it.
+  const pad = 26;
+  const px = pad + seededRandom(predictedIndex*2+1) * Math.max(1,(W-pad*2));
+  const py = pad + seededRandom(predictedIndex*2+2) * Math.max(1,(H-pad*2));
+  const sizeF = seededRandom(predictedIndex*2+10);
+  const parallax = 5 + sizeF*17;
+  const destX = px + smooth.x*parallax;
+  const destY = py + smooth.y*parallax;
+
+  const btn = who === 'A' ? btnA : btnB;
+  const rect = btn.getBoundingClientRect();
+
+  if(!reduceMotion){
+    const travelDuration = 600;
+    travelingSparks.push({
+      x1: rect.left+rect.width/2, y1: rect.top+rect.height/2,
+      x2: destX, y2: destY,
+      start: performance.now(),
+      duration: travelDuration,
+      color: who==='A' ? '#f0c169' : '#dd8291'
+    });
+    growTimes.set(entryTime, performance.now()+travelDuration);
+  }
+
+  flashButton(who);
+  playChime();
+}
+
+function showTooltip(star){
+  const tip = document.getElementById('starTip');
+  const name = nameFor(star.who);
+  const d = new Date(star.time);
+  const sameDay = d.toDateString() === new Date().toDateString();
+  const timeStr = d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+  const label = sameDay ? timeStr : d.toLocaleDateString([], { month:'short', day:'numeric' }) + ' · ' + timeStr;
+  let html = `${name} · ${label}`;
+  if(star.milestoneLabel){ html += `<span class="tip-milestone">✦ ${escapeHtml(star.milestoneLabel)}</span>`; }
+  if(star.countLabel){ html += `<span class="tip-milestone">✦ ${escapeHtml(star.countLabel)}</span>`; }
+  if(star.note){ html += `<span class="tip-note">"${escapeHtml(star.note)}"</span>`; }
+  tip.innerHTML = html;
+  const p = starScreenPos(star);
+  tip.style.left = p.x + 'px';
+  tip.style.top = p.y + 'px';
+  tip.classList.add('show');
+  clearTimeout(tipTimeout);
+  tipTimeout = setTimeout(()=>tip.classList.remove('show'), 3800);
+}
+
+function onCanvasClick(e){
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  let hit = null, bestD = 18;
+  stars.forEach(s=>{
+    const p = starScreenPos(s);
+    const dx = p.x - x;
+    const dy = p.y - y;
+    const d = Math.sqrt(dx*dx+dy*dy);
+    if(d < bestD){ bestD = d; hit = s; }
+  });
+  if(hit){ showTooltip(hit); }
+  else { document.getElementById('starTip').classList.remove('show'); }
+}
+
+function onMouseMove(e){
+  target.x = (e.clientX / window.innerWidth) - 0.5;
+  target.y = (e.clientY / window.innerHeight) - 0.5;
+}
+
+let resizeTimer = null;
+function onResize(){
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(resizeCanvas, 100);
+}
+
+/* ---- note composer ---- */
+
+function openComposer(who){
+  composerWho = who;
+  composer.classList.remove('gold','rose');
+  composer.classList.add(who==='A' ? 'gold' : 'rose');
+  composerTag.textContent = nameFor(who);
+  composerInput.value = '';
+  composer.classList.add('show');
+  setTimeout(()=>composerInput.focus(), 50);
+}
+function closeComposer(){
+  composer.classList.remove('show');
+  composerWho = null;
+  composerInput.blur();
+}
+function confirmComposer(){
+  if(composerWho === null) return;
+  const note = composerInput.value.trim();
+  const who = composerWho;
+  closeComposer();
+  onTap(who, note);
+}
+
+noteA.addEventListener('click', ()=>openComposer('A'));
+noteB.addEventListener('click', ()=>openComposer('B'));
+composerSend.addEventListener('click', confirmComposer);
+composerInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){ confirmComposer(); }
+});
+
+/* ---- top-right menu ---- */
+
+menuBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  menuPanel.classList.toggle('show');
+});
+document.getElementById('menuMilestones').addEventListener('click', ()=>{
+  menuPanel.classList.remove('show');
+  openMilestonesModal();
+});
+document.getElementById('menuExport').addEventListener('click', ()=>{
+  menuPanel.classList.remove('show');
+  exportSnapshot();
+});
+function refreshSoundToggleUI(){
+  soundToggle.classList.toggle('on', soundEnabled);
+  soundToggle.setAttribute('aria-checked', String(soundEnabled));
+}
+soundToggle.addEventListener('click', ()=>{
+  soundEnabled = !soundEnabled;
+  localStorage.setItem(SOUND_KEY, soundEnabled ? 'on' : 'off');
+  refreshSoundToggleUI();
+});
+
+function applyTextVisibility(){
+  heroEl.classList.toggle('text-hidden', textHidden);
+  menuToggleText.textContent = textHidden ? 'Show text' : 'Hide text';
+}
+menuToggleText.addEventListener('click', ()=>{
+  textHidden = !textHidden;
+  localStorage.setItem(TEXT_HIDDEN_KEY, textHidden ? 'on' : 'off');
+  applyTextVisibility();
+  menuPanel.classList.remove('show');
+});
+
+/* ---- identity + notifications ---- */
+
+const IDENTITY_KEY = 'missedyou_identity';
+
+function getIdentity(){ return localStorage.getItem(IDENTITY_KEY); }
+function setIdentity(who){ localStorage.setItem(IDENTITY_KEY, who); }
+
+function openIdentityModal(){
+  identityBackdrop.classList.add('show');
+}
+function closeIdentityModal(){
+  identityBackdrop.classList.remove('show');
+}
+
+async function registerForNotifications(who){
+  try{
+    const supported = await isMessagingSupported();
+    if(!supported){
+      console.warn('Push messaging is not supported in this browser.');
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    if(permission !== 'granted'){
+      console.warn('Notification permission not granted:', permission);
+      return;
+    }
+    const registration = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+    const messaging = getMessaging(firebaseApp);
+    const token = await getToken(messaging, {
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: registration
+    });
+    if(token){
+      await set(ref(db, 'tokens/' + who), token);
+    }
+  } catch(err){
+    console.error('Notification setup failed:', err);
+  }
+}
+
+/* Used when re-triggering from the menu. A plain getToken() can get
+   stuck returning nothing after permission has been revoked and
+   re-granted — a known FCM web quirk — so this tears down the old
+   service worker + token first, forcing a genuinely fresh one. */
+async function resetAndRegisterNotifications(who){
+  try{
+    const supported = await isMessagingSupported();
+    if(!supported){
+      showToast('Push notifications aren\u2019t supported in this browser');
+      return;
+    }
+    const existingReg = await navigator.serviceWorker.getRegistration('firebase-messaging-sw.js');
+    if(existingReg){
+      try{
+        await deleteToken(getMessaging(firebaseApp));
+      } catch(e){ /* fine — nothing valid to delete */ }
+      await existingReg.unregister();
+    }
+
+    const permission = await Notification.requestPermission();
+    if(permission !== 'granted'){
+      showToast('Notifications are blocked — check your phone\u2019s site settings');
+      return;
+    }
+    const registration = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+    const messaging = getMessaging(firebaseApp);
+    const token = await getToken(messaging, {
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: registration
+    });
+    if(token){
+      await set(ref(db, 'tokens/' + who), token);
+      showToast('Notifications set up \u2713');
+    } else {
+      showToast('Could not get a notification token — try again');
+    }
+  } catch(err){
+    console.error('Notification reset failed:', err);
+    showToast('Something went wrong — try again in a bit');
+  }
+}
+
+document.getElementById('identityA').addEventListener('click', ()=>{
+  setIdentity('A');
+  closeIdentityModal();
+  registerForNotifications('A');
+});
+document.getElementById('identityB').addEventListener('click', ()=>{
+  setIdentity('B');
+  closeIdentityModal();
+  registerForNotifications('B');
+});
+identityBackdrop.addEventListener('click', (e)=>{
+  if(e.target === identityBackdrop) closeIdentityModal();
+});
+document.getElementById('menuNotifications').addEventListener('click', ()=>{
+  menuPanel.classList.remove('show');
+  const who = getIdentity();
+  if(!who){ openIdentityModal(); }
+  else{ resetAndRegisterNotifications(who); }
+});
+
+/* ---- milestones modal ---- */
+
+function ordinal(n){
+  const j = n % 10, k = n % 100;
+  if(j===1 && k!==11) return n+'st';
+  if(j===2 && k!==12) return n+'nd';
+  if(j===3 && k!==13) return n+'rd';
+  return n+'th';
+}
+
+let milestoneRepeatType = 'annual';
+
+function renderMilestoneList(){
+  const el = document.getElementById('milestoneList');
+  if(milestonesCache.length === 0){
+    el.innerHTML = `<p class="milestone-empty">no milestones yet — add one below.</p>`;
+    return;
+  }
+  const sorted = milestonesCache.slice().sort((a,b)=>(a.day-b.day)||((a.month||0)-(b.month||0)));
+  el.innerHTML = sorted.map(m=>{
+    const dateLabel = m.type === 'monthly' ? ('Every ' + ordinal(m.day)) : (MONTH_NAMES[m.month-1] + ' ' + m.day);
+    return `<div class="milestone-item">
+      <span class="milestone-date">${dateLabel}</span>
+      <span class="milestone-label">${escapeHtml(m.label)}</span>
+      <button type="button" class="milestone-delete" data-id="${m.id}" aria-label="Delete">×</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.milestone-delete').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      remove(ref(db, 'milestones/' + btn.dataset.id));
+    });
+  });
+}
+function openMilestonesModal(){
+  milestoneRepeatType = 'annual';
+  document.querySelectorAll('.repeat-option').forEach(b=>b.classList.toggle('active', b.dataset.type==='annual'));
+  document.getElementById('msMonth').style.display = '';
+  renderMilestoneList();
+  milestonesBackdrop.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeMilestonesModal(){
+  milestonesBackdrop.classList.remove('show');
+  document.body.style.overflow = '';
+}
+document.getElementById('milestonesClose').addEventListener('click', closeMilestonesModal);
+milestonesBackdrop.addEventListener('click', (e)=>{
+  if(e.target === milestonesBackdrop) closeMilestonesModal();
+});
+document.querySelectorAll('.repeat-option').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    milestoneRepeatType = btn.dataset.type;
+    document.querySelectorAll('.repeat-option').forEach(b=>b.classList.toggle('active', b===btn));
+    document.getElementById('msMonth').style.display = milestoneRepeatType === 'monthly' ? 'none' : '';
+  });
+});
+document.getElementById('milestoneForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const type = milestoneRepeatType;
+  const month = type === 'monthly' ? null : parseInt(document.getElementById('msMonth').value, 10);
+  const day = parseInt(document.getElementById('msDay').value, 10);
+  const label = document.getElementById('msLabel').value.trim();
+  const errorEl = document.getElementById('milestoneFormError');
+  try{
+    if(!day || day<1 || day>31){
+      errorEl.textContent = 'Enter a day between 1 and 31.';
+      errorEl.classList.add('show');
+      return;
+    }
+    if(!label){
+      errorEl.textContent = 'Give it a short label.';
+      errorEl.classList.add('show');
+      return;
+    }
+    errorEl.classList.remove('show');
+    const data = type === 'monthly' ? { type, day, label } : { type, month, day, label };
+    set(push(ref(db, 'milestones')), data).then(()=>{
+      document.getElementById('msDay').value = '';
+      document.getElementById('msLabel').value = '';
+    }).catch(err=>{
+      errorEl.textContent = 'Error: ' + (err && err.message ? err.message : String(err));
+      errorEl.classList.add('show');
+    });
+  } catch(err){
+    errorEl.textContent = 'Error: ' + (err && err.message ? err.message : String(err));
+    errorEl.classList.add('show');
+  }
+});
+
+/* ---- global click / escape handling ---- */
+
+document.addEventListener('click', (e)=>{
+  if(menuPanel.classList.contains('show') && !menuPanel.contains(e.target) && e.target !== menuBtn){
+    menuPanel.classList.remove('show');
+  }
+  if(composer.classList.contains('show') && !composer.contains(e.target) && e.target !== noteA && e.target !== noteB){
+    closeComposer();
+  }
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key !== 'Escape') return;
+  if(milestonesBackdrop.classList.contains('show')) closeMilestonesModal();
+  if(composer.classList.contains('show')) closeComposer();
+  if(menuPanel.classList.contains('show')) menuPanel.classList.remove('show');
+});
+
+/* ---- search ---- */
+
+logSearch.addEventListener('input', ()=>{
+  searchTerm = logSearch.value;
+  renderTimeline(entriesCache);
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+
+let entriesLoadedOnce = false;
+let knownEntryKeys = new Set();
+
+function handleEntriesSnapshot(snapshot){
+  const val = snapshot.val() || {};
+  const newEntries = Object.keys(val).map(key => ({ id: key, ...val[key] }));
+  newEntries.sort((a,b)=> a.time - b.time);
+
+  if(entriesLoadedOnce){
+    newEntries.forEach(e=>{
+      // Skip entries that already have a growTimes entry — that
+      // means this device just tapped it locally and already
+      // queued the delayed spark-then-bloom animation for it.
+      if(!knownEntryKeys.has(e.id) && !reduceMotion && !growTimes.has(e.time)){
+        growTimes.set(e.time, performance.now());
+      }
+    });
+  }
+  knownEntryKeys = new Set(newEntries.map(e=>e.id));
+  entriesLoadedOnce = true;
+
+  entriesCache = newEntries;
+  lastTapAt = computeLastTapTimes(entriesCache);
+  stars = computeStars(entriesCache);
+  updateDom(entriesCache);
+  applyCooldownVisual('A');
+  applyCooldownVisual('B');
+  if(reduceMotion) drawFrame(performance.now());
+}
+
+function handleMilestonesSnapshot(snapshot){
+  const val = snapshot.val() || {};
+  milestonesCache = Object.keys(val).map(key => ({ id: key, ...val[key] }));
+  if(milestonesBackdrop.classList.contains('show')){
+    renderMilestoneList();
+  }
+}
+
+async function initApp(){
+  await migrateOldLocalData();
+
+  refreshSoundToggleUI();
+  applyTextVisibility();
+  resizeCanvas();
+  updateDom(entriesCache);
+
+  onValue(ref(db, 'entries'), handleEntriesSnapshot);
+  onValue(ref(db, 'milestones'), handleMilestonesSnapshot);
+
+  const existingIdentity = getIdentity();
+  if(!existingIdentity){
+    openIdentityModal();
+  } else {
+    registerForNotifications(existingIdentity);
+  }
+
+  window.addEventListener('resize', onResize);
+  window.addEventListener('mousemove', onMouseMove);
+  canvas.addEventListener('click', onCanvasClick);
+  btnA.addEventListener('click', ()=>onTap('A'));
+  btnB.addEventListener('click', ()=>onTap('B'));
+
+  if(!reduceMotion){
+    requestAnimationFrame(loop);
+    scheduleShootingStar();
+  }
+}
+initApp();
+</script>
+
+</body>
+</html>
