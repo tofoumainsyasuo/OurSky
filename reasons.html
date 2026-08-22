@@ -539,28 +539,42 @@ document.getElementById('reasonForm').addEventListener('submit', (e)=>{
 });
 
 let archiveScope = 'theirs';
+
 function renderArchive(){
   const who = getIdentity();
   const el = document.getElementById('archiveList');
+
   if(!who){
     el.innerHTML = `<p class="archive-empty">pick who you are first.</p>`;
     return;
   }
+
+  const seen = getSeenIds();
+
   const list = archiveScope === 'theirs'
-    ? reasonsCache.filter(r => r.author !== who)
+    ? reasonsCache.filter(r => r.author !== who && seen.has(r.id))
     : reasonsCache.filter(r => r.author === who);
+
   const sorted = list.slice().sort((a,b)=>b.time-a.time);
+
   if(sorted.length === 0){
     el.innerHTML = archiveScope === 'theirs'
-      ? `<p class="archive-empty">nothing from ${nameFor(otherOf(who))} yet.</p>`
+      ? `<p class="archive-empty">no revealed reasons yet.</p>`
       : `<p class="archive-empty">you haven't added any yet.</p>`;
     return;
   }
+
   el.innerHTML = sorted.map(r=>{
-    const d = new Date(r.time).toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'});
+    const d = new Date(r.time).toLocaleDateString([], {
+      month:'short',
+      day:'numeric',
+      year:'numeric'
+    });
+
     const deleteBtn = archiveScope === 'mine'
       ? `<button type="button" class="archive-delete" data-id="${r.id}" aria-label="Delete">&times;</button>`
       : '';
+
     return `<div class="archive-item">
       <div class="archive-item-row">
         <p class="archive-text">"${escapeHtml(r.text)}"</p>
@@ -569,12 +583,14 @@ function renderArchive(){
       <div class="archive-meta">${nameFor(r.author)} \u00b7 ${d}</div>
     </div>`;
   }).join('');
+
   el.querySelectorAll('.archive-delete').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       remove(ref(db, 'reasons/' + btn.dataset.id));
     });
   });
 }
+  
 document.querySelectorAll('.archive-tab').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     archiveScope = btn.dataset.scope;
