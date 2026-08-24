@@ -89,8 +89,8 @@
   }
   .menu-item:hover{background:rgba(245,242,251,0.06);}
 
-  .content{position:relative; z-index:10; max-width:34rem; width:100%; margin:0 auto;}
-  .hero-text{text-align:center; margin-bottom:2.6rem;}
+  .content{position:relative; z-index:10; max-width:38rem; width:100%; margin:0 auto;}
+  .hero-text{text-align:center; margin-bottom:2.4rem;}
   .eyebrow{
     font-family:'JetBrains Mono', monospace; font-size:0.7rem;
     letter-spacing:0.24em; text-transform:uppercase; color:var(--dim);
@@ -101,72 +101,78 @@
     font-size:clamp(1.7rem, 5.2vw, 2.4rem); line-height:1.25;
     letter-spacing:-0.01em; max-width:24ch; margin:0 auto;
   }
-  .lede{margin-top:0.9rem; max-width:26rem; margin-left:auto; margin-right:auto; color:var(--dim); font-size:0.92rem; line-height:1.6;}
+  .lede{margin-top:0.9rem; max-width:27rem; margin-left:auto; margin-right:auto; color:var(--dim); font-size:0.92rem; line-height:1.6;}
 
-  .habit-section{margin-bottom:2.2rem;}
-  .habit-section-label{
+  .garden-section{margin-bottom:2.4rem;}
+  .garden-section-label{
     font-family:'JetBrains Mono', monospace; font-size:0.68rem;
     letter-spacing:0.16em; text-transform:uppercase; color:var(--dim);
-    margin-bottom:0.8rem;
+    margin-bottom:0.9rem;
   }
-  .habit-section.mine .habit-section-label{color:var(--gold);}
-  .habit-section.theirs .habit-section-label{color:var(--rose);}
+  .garden-section.mine .garden-section-label{color:var(--gold);}
+  .garden-section.theirs .garden-section-label{color:var(--rose);}
 
-  .habit-list{display:flex; flex-direction:column; gap:0.6rem;}
-  .habit-row{
-    display:flex; align-items:center; gap:0.8rem;
+  .garden-grid{display:flex; flex-wrap:wrap; gap:0.7rem;}
+  .plant-card{
+    position:relative;
+    flex:0 0 calc(50% - 0.35rem);
     background:rgba(16,12,38,0.5); border:1px solid var(--glass-border);
-    border-radius:16px; padding:0.75rem 0.9rem;
+    border-radius:16px; padding:0.8rem 0.7rem 0.7rem;
     backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    text-align:center;
+    cursor:default;
   }
-  .habit-check{
-    flex-shrink:0; width:28px; height:28px; border-radius:50%;
-    border:1.5px solid var(--glass-border); background:transparent;
-    cursor:pointer; display:flex; align-items:center; justify-content:center;
-    color:transparent; font-size:0.85rem;
-    transition:background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  .plant-card.tappable{cursor:pointer;}
+  .plant-card.tappable:active{transform:scale(0.97);}
+  .plant-svg{width:66px; height:76px; display:block; margin:0 auto;}
+  .plant-svg .soil{fill:var(--dim);}
+  .plant-svg .seed{fill:var(--dim);}
+  .garden-section.mine .plant-svg .stem{stroke:var(--gold);}
+  .garden-section.mine .plant-svg .leaf,
+  .garden-section.mine .plant-svg .bud,
+  .garden-section.mine .plant-svg .petal,
+  .garden-section.mine .plant-svg .flower-center{fill:var(--gold);}
+  .garden-section.theirs .plant-svg .stem{stroke:var(--rose);}
+  .garden-section.theirs .plant-svg .leaf,
+  .garden-section.theirs .plant-svg .bud,
+  .garden-section.theirs .plant-svg .petal,
+  .garden-section.theirs .plant-svg .flower-center{fill:var(--rose);}
+  .plant-svg .stem{fill:none; stroke-width:2.2;}
+  .plant-svg.stage-up{animation:stageUp 0.7s ease-out;}
+  @keyframes stageUp{
+    0%{ filter:drop-shadow(0 0 0 transparent); transform:scale(1); }
+    40%{ filter:drop-shadow(0 0 8px currentColor); transform:scale(1.15); }
+    100%{ filter:drop-shadow(0 0 0 transparent); transform:scale(1); }
   }
-  .habit-check:active{transform:scale(0.9);}
-  .habit-check.done{background:var(--gold); border-color:var(--gold); color:var(--void);}
-  .habit-status-dot{
-    flex-shrink:0; width:12px; height:12px; border-radius:50%;
-    border:1.5px solid var(--glass-border); margin:0 8px;
-  }
-  .habit-status-dot.done{background:var(--rose); border-color:var(--rose); box-shadow:0 0 8px var(--rose);}
-  .habit-info{flex:1; min-width:0;}
-  .habit-text{font-size:0.92rem; color:var(--moonlight); margin-bottom:0.35rem; word-break:break-word;}
-  .habit-pips{display:flex; gap:3px; align-items:center;}
-  .pip{width:6px; height:6px; border-radius:50%; background:rgba(245,242,251,0.15);}
-  .pip.on{background:var(--gold);}
-  .habit-section.theirs .pip.on{background:var(--rose);}
-  .habit-streak{font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--dim); margin-left:4px;}
-  .counter-progress{font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:var(--dim); margin-bottom:0.35rem;}
-  .counter-bar{height:5px; background:rgba(245,242,251,0.1); border-radius:999px; overflow:hidden; margin-bottom:0.35rem;}
-  .counter-bar-fill{height:100%; background:var(--gold); border-radius:999px; transition:width 0.3s ease;}
-  .habit-section.theirs .counter-bar-fill{background:var(--rose);}
-  .counter-btn{
-    flex-shrink:0; width:28px; height:28px; border-radius:50%;
-    border:1.5px solid var(--glass-border); background:transparent;
-    color:var(--moonlight); cursor:pointer; font-size:1rem; line-height:1;
+  @media (prefers-reduced-motion: reduce){ .plant-svg.stage-up{animation:none;} }
+
+  .plant-name{font-size:0.85rem; color:var(--moonlight); margin-top:0.3rem;}
+  .plant-progress{font-family:'JetBrains Mono', monospace; font-size:0.68rem; color:var(--dim); margin-top:0.2rem;}
+  .plant-streak{font-family:'JetBrains Mono', monospace; font-size:0.64rem; color:var(--dim); margin-top:0.15rem;}
+  .plant-hint{font-family:'JetBrains Mono', monospace; font-size:0.6rem; letter-spacing:0.05em; color:var(--dim); text-transform:uppercase; margin-top:0.4rem; opacity:0.7;}
+
+  .plant-minus{
+    position:absolute; bottom:6px; left:6px;
+    width:22px; height:22px; border-radius:50%;
+    border:1px solid var(--glass-border); background:rgba(245,242,251,0.06);
+    color:var(--moonlight); font-size:0.85rem; line-height:1; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
-    transition:background 0.15s ease, transform 0.15s ease;
   }
-  .counter-btn:active{transform:scale(0.9);}
-  .counter-btn:hover{background:rgba(245,242,251,0.08);}
-  .habit-cheer{
-    flex-shrink:0; background:none; border:none; cursor:pointer;
-    font-size:1.05rem; color:var(--dim); padding:0.3rem;
+  .plant-cheer{
+    position:absolute; bottom:6px; left:6px;
+    background:none; border:none; cursor:pointer;
+    font-size:1.05rem; color:var(--dim);
     transition:color 0.15s ease, transform 0.15s ease;
   }
-  .habit-cheer:hover{transform:scale(1.15);}
-  .habit-cheer.cheered{color:var(--rose);}
-  .habit-delete{flex-shrink:0; background:none; border:none; color:var(--dim); font-size:1.1rem; cursor:pointer; padding:0.3rem;}
-  .habit-delete:hover{color:var(--rose);}
-  .cheer-badge{
-    font-family:'JetBrains Mono', monospace; font-size:0.65rem;
-    color:var(--rose); margin-top:0.3rem;
+  .plant-cheer:hover{transform:scale(1.15);}
+  .plant-cheer.cheered{color:var(--rose);}
+  .cheer-badge{font-family:'JetBrains Mono', monospace; font-size:0.6rem; color:var(--rose); margin-top:0.25rem;}
+  .plant-delete{
+    position:absolute; top:4px; right:6px;
+    background:none; border:none; color:var(--dim); font-size:1rem; cursor:pointer; padding:0.2rem;
   }
-  .habit-empty{color:var(--dim); font-style:italic; font-size:0.85rem; padding:0.4rem 0;}
+  .plant-delete:hover{color:var(--rose);}
+  .garden-empty{color:var(--dim); font-style:italic; font-size:0.85rem; padding:0.4rem 0;}
 
   .modal-backdrop{
     position:fixed; inset:0; background:rgba(5,4,13,0.72);
@@ -188,6 +194,11 @@
   .modal-header h3{font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:1.15rem;}
   .modal-close{background:none; border:none; color:var(--dim); font-size:1.5rem; cursor:pointer; line-height:1; padding:0.2rem 0.4rem;}
   .modal-close:hover{color:var(--moonlight);}
+  #habitInput{
+    width:100%; background:rgba(245,242,251,0.06); border:1px solid var(--glass-border);
+    border-radius:12px; padding:0.7rem 0.85rem; font-size:0.9rem; margin-bottom:0.6rem;
+  }
+  #habitInput::placeholder{color:rgba(245,242,251,0.35);}
   .habit-type-toggle{display:flex; gap:0.4rem; margin-bottom:0.7rem;}
   .type-option{
     flex:1; padding:0.5rem; border-radius:8px;
@@ -204,11 +215,6 @@
     border-radius:12px; padding:0.7rem 0.85rem; font-size:0.9rem;
   }
   .counter-fields input::placeholder{color:rgba(245,242,251,0.35);}
-  #habitInput{
-    width:100%; background:rgba(245,242,251,0.06); border:1px solid var(--glass-border);
-    border-radius:12px; padding:0.7rem 0.85rem; font-size:0.9rem; margin-bottom:0.6rem;
-  }
-  #habitInput::placeholder{color:rgba(245,242,251,0.35);}
   .form-error{display:none; color:var(--rose); font-size:0.78rem; margin-bottom:0.6rem;}
   .form-error.show{display:block;}
   #habitForm button[type="submit"]{
@@ -251,14 +257,14 @@
 </div>
 <button type="button" class="menu-btn" id="menuBtn" aria-label="More options">&#8943;</button>
 <div class="menu-panel" id="menuPanel">
-  <button type="button" class="menu-item" id="menuAddMine">Add to your list</button>
-  <button type="button" class="menu-item" id="menuAddTheirs">Add to their list</button>
+  <button type="button" class="menu-item" id="menuAddMine">Plant for you</button>
+  <button type="button" class="menu-item" id="menuAddTheirs">Plant for them</button>
 </div>
 
 <div class="modal-backdrop" id="identityBackdrop">
   <div class="modal-card">
     <div class="modal-header"><h3>which one are you?</h3></div>
-    <p class="identity-sub">So we know which list is which.</p>
+    <p class="identity-sub">So we know which garden is which.</p>
     <div class="identity-choices">
       <button type="button" class="identity-btn gold" id="identityA">Inno</button>
       <button type="button" class="identity-btn rose" id="identityB">Yuki</button>
@@ -269,7 +275,7 @@
 <div class="modal-backdrop" id="addBackdrop">
   <div class="modal-card">
     <div class="modal-header">
-      <h3 id="addHabitTitle">add a habit</h3>
+      <h3 id="addHabitTitle">plant something new</h3>
       <button type="button" class="modal-close" id="addClose" aria-label="Close">&times;</button>
     </div>
     <form id="habitForm">
@@ -283,7 +289,7 @@
         <input type="text" id="habitUnit" placeholder="Unit, e.g. glasses" maxlength="20">
       </div>
       <p class="form-error" id="habitFormError"></p>
-      <button type="submit">Add it</button>
+      <button type="submit">Plant it</button>
     </form>
   </div>
 </div>
@@ -292,19 +298,19 @@
 
 <div class="content">
   <div class="hero-text">
-    <div class="eyebrow">for the small stuff too</div>
-    <h1>Because I clearly care about you more than you care about yourself tsk tsk</h1>
-    <p class="lede">You add habbits you wanna fix to your list. or ones you want me to to mine, and we can cheer each other on them along the way.</p>
+    <div class="eyebrow">a small garden, tended daily</div>
+    <h1>Not all of it's romantic. Some of it's just remembering to drink water.</h1>
+    <p class="lede">You each tend your own \u2014 the other can watch things grow, cheer you on, and plant a thing or two of their own.</p>
   </div>
 
-  <div class="habit-section mine">
-    <div class="habit-section-label" id="mineLabel">you</div>
-    <div class="habit-list" id="mineList"></div>
+  <div class="garden-section mine">
+    <div class="garden-section-label" id="mineLabel">you</div>
+    <div class="garden-grid" id="mineGrid"></div>
   </div>
 
-  <div class="habit-section theirs">
-    <div class="habit-section-label" id="theirsLabel">them</div>
-    <div class="habit-list" id="theirsList"></div>
+  <div class="garden-section theirs">
+    <div class="garden-section-label" id="theirsLabel">them</div>
+    <div class="garden-grid" id="theirsGrid"></div>
   </div>
 </div>
 
@@ -341,15 +347,6 @@ function todayKey(){
   const d = new Date();
   return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
 }
-function last7Keys(){
-  const keys = [];
-  for(let i=6;i>=0;i--){
-    const d = new Date();
-    d.setDate(d.getDate()-i);
-    keys.push(d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate());
-  }
-  return keys;
-}
 function dateKeyToStart(key){
   const [y,m,d] = key.split('-').map(Number);
   return new Date(y, m-1, d).getTime();
@@ -365,10 +362,57 @@ function computeStreak(checkinMap, target){
   while(days.has(cursor)){ streak++; cursor -= oneDay; }
   return streak;
 }
+function getStage(streak){
+  if(streak <= 0) return 0;
+  if(streak <= 2) return 1;
+  if(streak <= 6) return 2;
+  if(streak <= 13) return 3;
+  return 4;
+}
+
+/* Every plant is generated from the same function — soil, then a
+   stem+leaves that grow taller with streak length, then a closed
+   bud, then a full radial-petal bloom. Geometry verified to stay
+   inside the viewBox at every stage before this was ever written
+   into the page. */
+function plantSvgInner(stage){
+  const soil = '<ellipse class="soil" cx="0" cy="2" rx="15" ry="4"/>';
+  if(stage === 0){
+    return soil + '<circle class="seed" cx="0" cy="0" r="1.6"/>';
+  }
+  const heights = [0, 10, 18, 26, 26];
+  const h = heights[stage];
+  let stem = `<line class="stem" x1="0" y1="0" x2="0" y2="${-h}" stroke-linecap="round"/>`;
+
+  let leaves = '';
+  const leafCounts = [0, 1, 2, 3, 3];
+  const n = leafCounts[stage];
+  for(let i=0;i<n;i++){
+    const t = (i+1)/(n+1);
+    const y = -h*t;
+    const side = i % 2 === 0 ? 1 : -1;
+    const lx = side * 6;
+    const rot = side * 35;
+    leaves += `<ellipse class="leaf" cx="${lx}" cy="${y}" rx="6" ry="2.6" transform="rotate(${rot} ${lx} ${y})"/>`;
+  }
+
+  let top = '';
+  if(stage === 3){
+    top = `<ellipse class="bud" cx="0" cy="${-h-3}" rx="3" ry="4.5"/>`;
+  } else if(stage === 4){
+    const petals = [0,72,144,216,288].map(a=>
+      `<ellipse class="petal" cx="0" cy="${-h-8}" rx="4" ry="7" transform="rotate(${a} 0 ${-h})"/>`
+    ).join('');
+    top = petals + `<circle class="flower-center" cx="0" cy="${-h}" r="3.2"/>`;
+  }
+  return soil + stem + leaves + top;
+}
 
 let habitsCache = { A: {}, B: {} };
 let checkinsCache = { A: {}, B: {} };
 let cheersCache = { A: {}, B: {} };
+let knownStages = {};
+let hasLoadedStages = false;
 
 const identityBackdrop = document.getElementById('identityBackdrop');
 const addBackdrop = document.getElementById('addBackdrop');
@@ -412,7 +456,7 @@ function openAddModal(target){
   habitType = 'check';
   document.querySelectorAll('.type-option').forEach(b=>b.classList.toggle('active', b.dataset.type==='check'));
   document.getElementById('counterFields').classList.remove('show');
-  document.getElementById('addHabitTitle').textContent = target === who ? 'add to your list' : ('add to ' + nameFor(target) + '\u2019s list');
+  document.getElementById('addHabitTitle').textContent = target === who ? 'plant something for you' : ('plant something for ' + nameFor(target));
   document.getElementById('habitInput').value = '';
   document.getElementById('habitTarget').value = '';
   document.getElementById('habitUnit').value = '';
@@ -470,7 +514,7 @@ document.getElementById('habitForm').addEventListener('submit', (e)=>{
       : { text, addedBy: who, time: Date.now(), type: 'check' };
     set(push(ref(db, 'habits/' + addTarget)), habitData).then(()=>{
       addBackdrop.classList.remove('show');
-      showToast('Added \u2713');
+      showToast('Planted \u2713');
     }).catch(err=>{
       errorEl.textContent = 'Error: ' + (err && err.message ? err.message : String(err));
       errorEl.classList.add('show');
@@ -507,87 +551,58 @@ function deleteHabit(owner, habitId){
   remove(ref(db, 'checkins/' + owner + '/' + habitId));
   remove(ref(db, 'cheers/' + owner + '/' + habitId));
 }
-
 function isHabitDoneToday(owner, habitId, habit){
   const key = todayKey();
   const val = checkinsCache[owner] && checkinsCache[owner][habitId] && checkinsCache[owner][habitId][key];
   if(habit.type === 'counter') return (Number(val)||0) >= habit.target;
   return !!val;
 }
-function renderPips(owner, habitId, target){
-  const map = (checkinsCache[owner] && checkinsCache[owner][habitId]) || {};
-  const isOn = target ? (k => (Number(map[k])||0) >= target) : (k => !!map[k]);
-  return last7Keys().map(k => `<span class="pip ${isOn(k) ? 'on' : ''}"></span>`).join('');
-}
 
-function renderMineRow(id, habit, owner){
+function plantCardHtml(id, habit, owner, isMine){
   const key = todayKey();
   const streak = computeStreak(checkinsCache[owner] && checkinsCache[owner][id], habit.target);
+  const stage = getStage(streak);
+  const stageKey = owner + ':' + id;
+  const stageUpClass = (hasLoadedStages && knownStages[stageKey] !== undefined && stage > knownStages[stageKey]) ? ' stage-up' : '';
+  knownStages[stageKey] = stage;
+
   const cheer = cheersCache[owner] && cheersCache[owner][id] && cheersCache[owner][id][key];
   const cheerBadge = cheer ? `<div class="cheer-badge">\u2661 ${nameFor(cheer.from)} cheered you on</div>` : '';
-  const streakTag = `<span class="habit-streak">${streak>0 ? streak+'d streak' : ''}</span>`;
-  const deleteBtn = `<button type="button" class="habit-delete" data-action="delete" data-id="${id}" aria-label="Delete">&times;</button>`;
+  const streakText = streak > 0 ? `${streak} day${streak===1?'':'s'} running` : 'just planted';
 
+  let progressText = '';
   if(habit.type === 'counter'){
     const count = Number(checkinsCache[owner] && checkinsCache[owner][id] && checkinsCache[owner][id][key]) || 0;
-    const pct = Math.min(100, (count/habit.target)*100);
-    return `<div class="habit-row" data-id="${id}">
-      <button type="button" class="counter-btn" data-action="decrement" data-id="${id}" aria-label="Minus one">\u2212</button>
-      <div class="habit-info">
-        <div class="habit-text">${escapeHtml(habit.text)}</div>
-        <div class="counter-progress">${count} / ${habit.target} ${escapeHtml(habit.unit||'')}</div>
-        <div class="counter-bar"><div class="counter-bar-fill" style="width:${pct}%"></div></div>
-        <div class="habit-pips">${renderPips(owner, id, habit.target)}${streakTag}</div>
-        ${cheerBadge}
-      </div>
-      <button type="button" class="counter-btn" data-action="increment" data-id="${id}" aria-label="Plus one">+</button>
-      ${deleteBtn}
-    </div>`;
+    progressText = `<div class="plant-progress">${count} / ${habit.target} ${escapeHtml(habit.unit||'')}</div>`;
   }
 
-  const done = isHabitDoneToday(owner, id, habit);
-  return `<div class="habit-row" data-id="${id}">
-    <button type="button" class="habit-check ${done?'done':''}" data-action="check" data-id="${id}">${done ? '&#10003;' : ''}</button>
-    <div class="habit-info">
-      <div class="habit-text">${escapeHtml(habit.text)}</div>
-      <div class="habit-pips">${renderPips(owner, id)}${streakTag}</div>
+  const svg = `<svg class="plant-svg${stageUpClass}" viewBox="-20 -42 40 48">${plantSvgInner(stage)}</svg>`;
+
+  if(isMine){
+    const hint = habit.type === 'counter' ? 'tap to +1' : 'tap to check in';
+    return `<div class="plant-card tappable" data-action="water" data-id="${id}" data-type="${habit.type}">
+      ${svg}
+      <div class="plant-name">${escapeHtml(habit.text)}</div>
+      ${progressText}
+      <div class="plant-streak">${streakText}</div>
+      <div class="plant-hint">${hint}</div>
       ${cheerBadge}
-    </div>
-    ${deleteBtn}
-  </div>`;
-}
-function renderTheirRow(id, habit, owner){
-  const key = todayKey();
-  const done = isHabitDoneToday(owner, id, habit);
-  const streak = computeStreak(checkinsCache[owner] && checkinsCache[owner][id], habit.target);
-  const cheered = !!(cheersCache[owner] && cheersCache[owner][id] && cheersCache[owner][id][key]);
-  const streakTag = `<span class="habit-streak">${streak>0 ? streak+'d streak' : ''}</span>`;
-  const cheerBtn = done ? `<button type="button" class="habit-cheer ${cheered?'cheered':''}" data-action="cheer" data-id="${id}" aria-label="Cheer">&#9825;</button>` : '';
-  const deleteBtn = habit.addedBy === getIdentity()
-    ? `<button type="button" class="habit-delete" data-action="delete-theirs" data-id="${id}" aria-label="Delete">&times;</button>`
-    : '';
-
-  if(habit.type === 'counter'){
-    const count = Number(checkinsCache[owner] && checkinsCache[owner][id] && checkinsCache[owner][id][key]) || 0;
-    const pct = Math.min(100, (count/habit.target)*100);
-    return `<div class="habit-row" data-id="${id}">
-      <div class="habit-info">
-        <div class="habit-text">${escapeHtml(habit.text)}</div>
-        <div class="counter-progress">${count} / ${habit.target} ${escapeHtml(habit.unit||'')}</div>
-        <div class="counter-bar"><div class="counter-bar-fill" style="width:${pct}%"></div></div>
-        <div class="habit-pips">${renderPips(owner, id, habit.target)}${streakTag}</div>
-      </div>
-      ${cheerBtn}
-      ${deleteBtn}
+      ${habit.type === 'counter' ? `<button type="button" class="plant-minus" data-action="minus" data-id="${id}" aria-label="Minus one">\u2212</button>` : ''}
+      <button type="button" class="plant-delete" data-action="delete" data-id="${id}" aria-label="Delete">&times;</button>
     </div>`;
   }
 
-  return `<div class="habit-row" data-id="${id}">
-    <span class="habit-status-dot ${done?'done':''}"></span>
-    <div class="habit-info">
-      <div class="habit-text">${escapeHtml(habit.text)}</div>
-      <div class="habit-pips">${renderPips(owner, id)}${streakTag}</div>
-    </div>
+  const done = isHabitDoneToday(owner, id, habit);
+  const cheered = !!cheer;
+  const cheerBtn = done ? `<button type="button" class="plant-cheer ${cheered?'cheered':''}" data-action="cheer" data-id="${id}" aria-label="Cheer">&#9825;</button>` : '';
+  const deleteBtn = habit.addedBy === getIdentity()
+    ? `<button type="button" class="plant-delete" data-action="delete-theirs" data-id="${id}" aria-label="Delete">&times;</button>`
+    : '';
+  return `<div class="plant-card" data-id="${id}">
+    ${svg}
+    <div class="plant-name">${escapeHtml(habit.text)}</div>
+    ${progressText}
+    <div class="plant-streak">${streakText}</div>
     ${cheerBtn}
     ${deleteBtn}
   </div>`;
@@ -595,11 +610,11 @@ function renderTheirRow(id, habit, owner){
 
 function renderAll(){
   const who = getIdentity();
-  const mineListEl = document.getElementById('mineList');
-  const theirsListEl = document.getElementById('theirsList');
+  const mineGrid = document.getElementById('mineGrid');
+  const theirsGrid = document.getElementById('theirsGrid');
   if(!who){
-    mineListEl.innerHTML = `<p class="habit-empty">pick who you are first.</p>`;
-    theirsListEl.innerHTML = '';
+    mineGrid.innerHTML = `<p class="garden-empty">pick who you are first.</p>`;
+    theirsGrid.innerHTML = '';
     return;
   }
   const other = otherOf(who);
@@ -608,42 +623,43 @@ function renderAll(){
 
   const mine = habitsCache[who] || {};
   const mineIds = Object.keys(mine).sort((a,b)=>mine[a].time-mine[b].time);
-  mineListEl.innerHTML = mineIds.length
-    ? mineIds.map(id => renderMineRow(id, mine[id], who)).join('')
-    : `<p class="habit-empty">nothing yet \u2014 add one from the menu.</p>`;
+  mineGrid.innerHTML = mineIds.length
+    ? mineIds.map(id => plantCardHtml(id, mine[id], who, true)).join('')
+    : `<p class="garden-empty">nothing planted yet \u2014 use the menu to plant one.</p>`;
 
   const theirs = habitsCache[other] || {};
   const theirIds = Object.keys(theirs).sort((a,b)=>theirs[a].time-theirs[b].time);
-  theirsListEl.innerHTML = theirIds.length
-    ? theirIds.map(id => renderTheirRow(id, theirs[id], other)).join('')
-    : `<p class="habit-empty">nothing on ${nameFor(other)}'s list yet.</p>`;
+  theirsGrid.innerHTML = theirIds.length
+    ? theirIds.map(id => plantCardHtml(id, theirs[id], other, false)).join('')
+    : `<p class="garden-empty">nothing in ${nameFor(other)}'s garden yet.</p>`;
 
-  mineListEl.querySelectorAll('[data-action="check"]').forEach(btn=>{
-    btn.addEventListener('click', ()=> toggleCheckin(who, btn.dataset.id));
+  hasLoadedStages = true;
+
+  mineGrid.querySelectorAll('[data-action="water"]').forEach(card=>{
+    card.addEventListener('click', (e)=>{
+      if(e.target.closest('[data-action="minus"]') || e.target.closest('[data-action="delete"]')) return;
+      const id = card.dataset.id;
+      if(card.dataset.type === 'counter') bumpCounter(who, id, 1);
+      else toggleCheckin(who, id);
+    });
   });
-  mineListEl.querySelectorAll('[data-action="increment"]').forEach(btn=>{
-    btn.addEventListener('click', ()=> bumpCounter(who, btn.dataset.id, 1));
+  mineGrid.querySelectorAll('[data-action="minus"]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); bumpCounter(who, btn.dataset.id, -1); });
   });
-  mineListEl.querySelectorAll('[data-action="decrement"]').forEach(btn=>{
-    btn.addEventListener('click', ()=> bumpCounter(who, btn.dataset.id, -1));
+  mineGrid.querySelectorAll('[data-action="delete"]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); deleteHabit(who, btn.dataset.id); });
   });
-  mineListEl.querySelectorAll('[data-action="delete"]').forEach(btn=>{
-    btn.addEventListener('click', ()=> deleteHabit(who, btn.dataset.id));
-  });
-  theirsListEl.querySelectorAll('[data-action="cheer"]').forEach(btn=>{
+  theirsGrid.querySelectorAll('[data-action="cheer"]').forEach(btn=>{
     btn.addEventListener('click', ()=> toggleCheer(other, btn.dataset.id));
   });
-  theirsListEl.querySelectorAll('[data-action="delete-theirs"]').forEach(btn=>{
+  theirsGrid.querySelectorAll('[data-action="delete-theirs"]').forEach(btn=>{
     btn.addEventListener('click', ()=> deleteHabit(other, btn.dataset.id));
   });
 }
 
 onValue(ref(db, 'habits'), (snapshot)=>{
   const val = snapshot.val() || {};
-  habitsCache = {
-    A: Object.fromEntries(Object.entries(val.A || {})),
-    B: Object.fromEntries(Object.entries(val.B || {}))
-  };
+  habitsCache = { A: val.A || {}, B: val.B || {} };
   renderAll();
 });
 onValue(ref(db, 'checkins'), (snapshot)=>{
