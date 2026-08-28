@@ -50,7 +50,7 @@
     pointer-events:none;
     z-index:15;
   }
-  .nav-row{position:fixed; top:16px; left:16px; display:flex; gap:0.5rem; z-index:20;}
+  .nav-row{position:fixed; top:16px; left:16px; display:flex; flex-wrap:wrap; gap:0.5rem; row-gap:0.4rem; max-width:calc(100vw - 32px - 46px); z-index:20;}
   .nav-pill{
     padding:0.5rem 0.9rem; border-radius:999px;
     border:1px solid var(--glass-border);
@@ -266,7 +266,8 @@
 <div class="nebula" id="nebulaB"></div>
 
 <div class="nav-row">
-  <a href="index.html" class="nav-pill">&larr; the sky</a>
+  <a href="index.html" class="nav-pill">&larr; home</a>
+  <a href="sky.html" class="nav-pill">the sky</a>
   <a href="checkin.html" class="nav-pill">check-in</a>
 </div>
 <button type="button" class="menu-btn" id="menuBtn" aria-label="More options">&#8943;</button>
@@ -326,7 +327,7 @@
 <div class="content">
   <div class="eyebrow">a flock, one fold at a time</div>
   <h1>Some reasons get <span class="accent">folded</span> into something that lasts.</h1>
-  <p class="lede">Fold one a day. It joins the flock for good \u2014 gold for what Inno wrote, rose for Yuki's.</p>
+  <p class="lede">Fold one a day. It joins the flock for good — gold for what Inno wrote, rose for Yuki's.</p>
 
   <button type="button" class="fold-trigger" id="foldTrigger">fold today's reason</button>
 
