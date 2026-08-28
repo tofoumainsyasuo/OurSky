@@ -150,11 +150,14 @@
   }
 
   /* ---------- staged entrance ---------- */
+  /* Visible by default (no JS required). .enter briefly hides each piece
+     via animation-fill-mode:backwards during its delay, then reveals it —
+     nothing here permanently sets opacity:0, so a slow/blocked script
+     can never leave the page blank. */
   @keyframes heroPiece{
     from{ opacity:0; transform:translateY(16px); }
     to{ opacity:1; transform:translateY(0); }
   }
-  .content > *{ opacity:0; }
   .content.enter .eyebrow{ animation:heroPiece 0.7s cubic-bezier(.16,1,.3,1) 0.05s backwards; }
   .content.enter h1{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.15s backwards; }
   .content.enter .lede{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.27s backwards; }
@@ -162,7 +165,10 @@
   .content.enter .rooms{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.5s backwards; }
   .content.enter footer{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.64s backwards; }
   @media (prefers-reduced-motion: reduce){
-    .content > *{ opacity:1 !important; animation:none !important; }
+    .content.enter .eyebrow, .content.enter h1, .content.enter .lede,
+    .content.enter .stats-line, .content.enter .rooms, .content.enter footer{
+      animation:none !important;
+    }
   }
 
   /* ---------- room cards ---------- */
@@ -340,21 +346,6 @@
 </div>
 
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js';
-import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDo6kwf9QtiLXCelZDSy_a6ktv6mTC6fa4",
-  authDomain: "oursky-1b847.firebaseapp.com",
-  databaseURL: "https://oursky-1b847-default-rtdb.firebaseio.com",
-  projectId: "oursky-1b847",
-  storageBucket: "oursky-1b847.firebasestorage.app",
-  messagingSenderId: "1029333881661",
-  appId: "1:1029333881661:web:0ffef5df392bc984c7ab54"
-};
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getDatabase(firebaseApp);
-
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---- ambient starfield ---- */
@@ -378,10 +369,27 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 /* ---- staged entrance ---- */
 document.querySelector('.content').classList.add('enter');
 
-/* ---- live counts, best-effort ---- */
+/* ---- live counts, best-effort — Firebase is loaded lazily in here so a
+   blocked/slow CDN can only ever affect this line, never the page above ---- */
 const statsEl = document.getElementById('statsLine');
 async function loadStats(){
   try{
+    const [{ initializeApp }, { getDatabase, ref, get }] = await Promise.all([
+      import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js')
+    ]);
+    const firebaseConfig = {
+      apiKey: "AIzaSyDo6kwf9QtiLXCelZDSy_a6ktv6mTC6fa4",
+      authDomain: "oursky-1b847.firebaseapp.com",
+      databaseURL: "https://oursky-1b847-default-rtdb.firebaseio.com",
+      projectId: "oursky-1b847",
+      storageBucket: "oursky-1b847.firebasestorage.app",
+      messagingSenderId: "1029333881661",
+      appId: "1:1029333881661:web:0ffef5df392bc984c7ab54"
+    };
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getDatabase(firebaseApp);
+
     const [entriesSnap, reasonsSnap, habitsSnap] = await Promise.all([
       get(ref(db, 'entries')),
       get(ref(db, 'reasons')),
