@@ -43,6 +43,18 @@
   @keyframes driftB{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(5%,-4%) scale(1.07);} }
   @media (prefers-reduced-motion: reduce){ .nebula{animation:none !important;} }
 
+  .grain{
+    position:fixed; inset:0; z-index:3; pointer-events:none;
+    opacity:0.035;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:140px 140px;
+  }
+  .vignette{
+    position:fixed; inset:0; z-index:4; pointer-events:none;
+    background:radial-gradient(ellipse 85% 75% at 70% 30%, transparent 40%, rgba(5,4,13,0.5) 100%);
+  }
+
   body::before{
     content:"";
     position:fixed; top:0; left:0; right:0; height:90px;
@@ -50,7 +62,7 @@
     pointer-events:none;
     z-index:15;
   }
-  .nav-row{position:fixed; top:16px; left:16px; display:flex; gap:0.5rem; z-index:20;}
+  .nav-row{position:fixed; top:16px; left:16px; display:flex; flex-wrap:wrap; gap:0.5rem; row-gap:0.4rem; max-width:calc(100vw - 32px - 46px); z-index:20;}
   .nav-pill{
     padding:0.5rem 0.9rem; border-radius:999px;
     border:1px solid var(--glass-border);
@@ -124,7 +136,19 @@
   }
   .plant-card.tappable{cursor:pointer;}
   .plant-card.tappable:active{transform:scale(0.97);}
-  .plant-svg{width:66px; height:76px; display:block; margin:0 auto;}
+  .plant-svg{
+    width:66px; height:76px; display:block; margin:0 auto;
+    transform-box:fill-box;
+    transform-origin:50% 100%;
+    animation:plantSway 4.5s ease-in-out infinite;
+  }
+  @keyframes plantSway{
+    0%{ transform:rotate(-3deg); }
+    30%{ transform:rotate(2.5deg); }
+    55%{ transform:rotate(-1deg); }
+    80%{ transform:rotate(3deg); }
+    100%{ transform:rotate(-3deg); }
+  }
   .plant-svg .soil{fill:var(--dim);}
   .plant-svg .seed{fill:var(--dim);}
   .garden-section.mine .plant-svg .stem{stroke:var(--gold);}
@@ -138,13 +162,23 @@
   .garden-section.theirs .plant-svg .petal,
   .garden-section.theirs .plant-svg .flower-center{fill:var(--rose);}
   .plant-svg .stem{fill:none; stroke-width:2.2;}
+  .plant-svg .petal, .plant-svg .bud{
+    transform-box:fill-box; transform-origin:50% 50%;
+    animation:budBreathe 2.8s ease-in-out infinite;
+  }
+  @keyframes budBreathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }
+  .plant-svg .petal:nth-child(6){ animation-delay:0s; }
+  .plant-svg .petal:nth-child(7){ animation-delay:0.15s; }
+  .plant-svg .petal:nth-child(8){ animation-delay:0.3s; }
+  .plant-svg .petal:nth-child(9){ animation-delay:0.45s; }
+  .plant-svg .petal:nth-child(10){ animation-delay:0.6s; }
   .plant-svg.stage-up{animation:stageUp 0.7s ease-out;}
   @keyframes stageUp{
     0%{ filter:drop-shadow(0 0 0 transparent); transform:scale(1); }
     40%{ filter:drop-shadow(0 0 8px currentColor); transform:scale(1.15); }
     100%{ filter:drop-shadow(0 0 0 transparent); transform:scale(1); }
   }
-  @media (prefers-reduced-motion: reduce){ .plant-svg.stage-up{animation:none;} }
+  @media (prefers-reduced-motion: reduce){ .plant-svg{animation:none;} .plant-svg .petal, .plant-svg .bud{animation:none;} }
 
   .plant-name{font-size:0.85rem; color:var(--moonlight); margin-top:0.3rem;}
   .plant-progress{font-family:'JetBrains Mono', monospace; font-size:0.68rem; color:var(--dim); margin-top:0.2rem;}
@@ -250,9 +284,12 @@
 
 <div class="nebula" id="nebulaA"></div>
 <div class="nebula" id="nebulaB"></div>
+<div class="grain"></div>
+<div class="vignette"></div>
 
 <div class="nav-row">
-  <a href="index.html" class="nav-pill">&larr; the sky</a>
+  <a href="index.html" class="nav-pill">&larr; home</a>
+  <a href="sky.html" class="nav-pill">the sky</a>
   <a href="reasons.html" class="nav-pill">reasons</a>
 </div>
 <button type="button" class="menu-btn" id="menuBtn" aria-label="More options">&#8943;</button>
@@ -299,8 +336,8 @@
 <div class="content">
   <div class="hero-text">
     <div class="eyebrow">a small garden, tended daily</div>
-    <h1>Because I care, and i know you do too.</h1>
-    <p class="lede">This one is a way for us to keep our, and each other's good and bad habits in check.</p>
+    <h1>Not all of it's romantic. Some of it's just remembering to drink water.</h1>
+    <p class="lede">You each tend your own — the other can watch things grow, cheer you on, and plant a thing or two of their own.</p>
   </div>
 
   <div class="garden-section mine">

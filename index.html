@@ -147,6 +147,7 @@
     text-transform:uppercase;
     color:var(--dim);
     min-height:1em;
+    transition:opacity 0.25s ease;
   }
 
   /* ---------- staged entrance ---------- */
@@ -162,11 +163,13 @@
   .content.enter h1{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.15s backwards; }
   .content.enter .lede{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.27s backwards; }
   .content.enter .stats-line{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.38s backwards; }
-  .content.enter .rooms{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.5s backwards; }
-  .content.enter footer{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.64s backwards; }
+  .content.enter .room-card:nth-child(1){ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.5s backwards; }
+  .content.enter .room-card:nth-child(2){ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.6s backwards; }
+  .content.enter .room-card:nth-child(3){ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.7s backwards; }
+  .content.enter footer{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.82s backwards; }
   @media (prefers-reduced-motion: reduce){
     .content.enter .eyebrow, .content.enter h1, .content.enter .lede,
-    .content.enter .stats-line, .content.enter .rooms, .content.enter footer{
+    .content.enter .stats-line, .content.enter .room-card, .content.enter footer{
       animation:none !important;
     }
   }
@@ -176,96 +179,205 @@
     margin-top:2.5rem;
     display:flex;
     flex-direction:column;
-    gap:0.85rem;
-    text-align:left;
+    gap:1.1rem;
   }
   .room-card{
     position:relative;
-    display:flex;
-    align-items:center;
-    gap:0.9rem;
-    width:100%;
+    display:block;
     text-decoration:none;
     color:inherit;
     border:1px solid transparent;
     background:
       linear-gradient(rgba(16,12,38,0.62), rgba(16,12,38,0.62)) padding-box,
       linear-gradient(135deg, rgba(245,242,251,0.30), rgba(245,242,251,0.05) 42%, rgba(245,242,251,0.16)) border-box;
-    border-radius:18px;
-    padding:0.85rem 1rem;
+    border-radius:20px;
+    overflow:hidden;
     backdrop-filter:blur(20px) saturate(150%);
     -webkit-backdrop-filter:blur(20px) saturate(150%);
     box-shadow:0 10px 34px rgba(5,4,13,0.4), 0 2px 8px rgba(5,4,13,0.3), inset 0 1px 0 rgba(255,255,255,0.07);
     transition:transform 0.18s ease, box-shadow 0.2s ease;
   }
   .room-card:hover{
-    transform:translateY(-2px);
-    box-shadow:0 14px 44px rgba(5,4,13,0.48), 0 3px 10px rgba(5,4,13,0.36), inset 0 1px 0 rgba(255,255,255,0.09);
+    transform:translateY(-3px);
+    box-shadow:0 16px 46px rgba(5,4,13,0.5), 0 3px 10px rgba(5,4,13,0.38), inset 0 1px 0 rgba(255,255,255,0.09);
   }
   .room-card:active{ transform:translateY(0) scale(0.98); }
   .room-card:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
 
-  .room-icon-node{
-    flex-shrink:0;
-    width:48px; height:48px;
-    border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(245,242,251,0.05);
-    border:1px solid var(--glass-border);
-    transition:border-color 0.2s ease, background 0.2s ease;
-  }
-  .room-card:hover .room-icon-node{
-    border-color:rgba(240,193,105,0.4);
-    background:rgba(240,193,105,0.08);
-  }
-
-  .room-icon.star{
-    font-size:1.3rem;
-    line-height:1;
-    color:var(--moonlight);
-    text-shadow:0 0 10px rgba(245,242,251,0.3);
-    transition:color 0.2s ease, text-shadow 0.2s ease;
-  }
-  .room-card:hover .room-icon.star{
-    color:var(--gold);
-    text-shadow:0 0 14px rgba(240,193,105,0.55);
-  }
-
-  .room-icon.crane{ display:block; animation:homeCraneBob 4.5s ease-in-out infinite; }
-  .room-icon.crane polygon{ fill:var(--moonlight); transition:fill 0.2s ease; }
-  .room-card:hover .room-icon.crane polygon{ fill:var(--gold); }
-  @keyframes homeCraneBob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-3px);} }
-  @media (prefers-reduced-motion: reduce){ .room-icon.crane{animation:none;} }
-
-  .room-icon.plant{ display:block; }
-  .room-icon.plant .soil{ fill:var(--dim); }
-  .room-icon.plant .stem{ fill:none; stroke:var(--moonlight); stroke-width:2.2; transition:stroke 0.2s ease; }
-  .room-icon.plant .leaf, .room-icon.plant .petal, .room-icon.plant .flower-center{ fill:var(--moonlight); transition:fill 0.2s ease; }
-  .room-card:hover .room-icon.plant .stem{ stroke:var(--gold); }
-  .room-card:hover .room-icon.plant .leaf,
-  .room-card:hover .room-icon.plant .petal,
-  .room-card:hover .room-icon.plant .flower-center{ fill:var(--gold); }
-
-  .room-copy{ flex:1; min-width:0; }
-  .room-name{
+  .room-stage{ position:relative; height:112px; width:100%; transition:filter 0.15s ease; }
+  .room-card:active .room-stage{ filter:brightness(1.3); }
+  .room-label{
     font-family:'Fraunces', serif;
     font-style:italic;
     font-weight:600;
     font-size:1.05rem;
     color:var(--moonlight);
-    margin-bottom:0.2rem;
+    text-align:center;
+    padding:0.7rem 1rem 1.05rem;
+    transition:color 0.2s ease;
   }
-  .room-desc{
-    font-size:0.83rem;
-    line-height:1.5;
-    color:var(--dim);
+  .room-card:hover .room-label{ color:var(--gold); }
+
+  /* -- the sky: a little constellation, twinkling, with an occasional shooting star -- */
+  .room-stage-sky{
+    background:
+      radial-gradient(ellipse at 50% 38%, rgba(245,242,251,0.07), transparent 65%),
+      linear-gradient(180deg, transparent 55%, rgba(36,31,69,0.4) 100%);
   }
-  .room-arrow{
-    flex-shrink:0;
-    color:var(--dim);
-    transition:transform 0.2s ease, color 0.2s ease;
+  .mini-star{
+    position:absolute;
+    border-radius:50%;
+    background:var(--moonlight);
+    animation:starTwinkle var(--dur,3.2s) ease-in-out infinite;
+    animation-delay:var(--delay,0s);
   }
-  .room-card:hover .room-arrow{ transform:translateX(3px); color:var(--gold); }
+  .room-icon.star-big{
+    --glow:245,242,251;
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    font-size:1.9rem; line-height:1;
+    color:var(--moonlight);
+    text-shadow:0 0 14px rgba(245,242,251,0.4);
+    animation:starPulse 3s ease-in-out infinite;
+  }
+  .room-card:hover .room-icon.star-big{ color:var(--gold); --glow:240,193,105; }
+  @keyframes starPulse{
+    0%,100%{ transform:translate(-50%,-50%) scale(1); text-shadow:0 0 14px rgba(var(--glow),0.4); }
+    50%{ transform:translate(-50%,-50%) scale(1.16); text-shadow:0 0 22px rgba(var(--glow),0.65); }
+  }
+  .shooting-star{
+    position:absolute;
+    top:22%; left:-14%;
+    width:44px; height:1.5px;
+    background:linear-gradient(90deg, transparent, var(--moonlight), transparent);
+    opacity:0;
+    transform:rotate(20deg);
+    animation:shootingStar 7s ease-in infinite;
+    animation-delay:2.4s;
+  }
+  @keyframes shootingStar{
+    0%{ opacity:0; transform:translate(0,0) rotate(20deg); }
+    5%{ opacity:0.9; }
+    16%{ opacity:0; transform:translate(180px,66px) rotate(20deg); }
+    100%{ opacity:0; transform:translate(180px,66px) rotate(20deg); }
+  }
+  .shooting-star-2{
+    position:absolute;
+    top:70%; left:-8%;
+    width:32px; height:1.3px;
+    background:linear-gradient(90deg, transparent, var(--moonlight), transparent);
+    opacity:0;
+    transform:rotate(-14deg);
+    animation:shootingStar2 11s ease-in infinite;
+    animation-delay:5.8s;
+  }
+  @keyframes shootingStar2{
+    0%{ opacity:0; transform:translate(0,0) rotate(-14deg); }
+    4%{ opacity:0.75; }
+    13%{ opacity:0; transform:translate(170px,-46px) rotate(-14deg); }
+    100%{ opacity:0; transform:translate(170px,-46px) rotate(-14deg); }
+  }
+
+  /* -- reasons: a small flock gliding, wings flapping -- */
+  .room-stage-reasons{
+    background:
+      radial-gradient(ellipse at 55% 50%, rgba(245,242,251,0.06), transparent 68%),
+      linear-gradient(180deg, rgba(245,242,251,0.05) 0%, transparent 45%);
+  }
+  .room-icon.crane{ position:absolute; }
+  .room-icon.crane polygon{ fill:var(--moonlight); transition:fill 0.2s ease; }
+  .room-card:hover .room-icon.crane polygon{ fill:var(--gold); }
+  .crane-wing{ transform-box:fill-box; transform-origin:50% 50%; animation:wingFlap 1.1s ease-in-out infinite; }
+  .crane-main .crane-wing{ animation-delay:0s; }
+  .crane-bg-1 .crane-wing{ animation-delay:0.3s; }
+  .crane-bg-2 .crane-wing{ animation-delay:0.55s; }
+  .crane-main{
+    top:50%; left:50%; width:34px; height:28px;
+    transform:translate(-50%,-50%);
+    animation:craneGlideMain 5s ease-in-out infinite;
+    z-index:2;
+  }
+  .crane-bg{ opacity:0.32; }
+  .crane-bg-1{ top:28%; left:30%; width:20px; height:16px; animation:craneGlideBg 6.5s ease-in-out infinite; animation-delay:0.6s; }
+  .crane-bg-2{ top:68%; left:68%; width:16px; height:13px; animation:craneGlideBg 5.8s ease-in-out infinite; animation-delay:1.4s; }
+  @keyframes craneGlideMain{
+    0%{ transform:translate(-50%,-50%) translate(0,0) rotate(0deg); }
+    25%{ transform:translate(-50%,-50%) translate(3px,-5px) rotate(-3deg); }
+    50%{ transform:translate(-50%,-50%) translate(-2px,-8px) rotate(-6deg); }
+    75%{ transform:translate(-50%,-50%) translate(-4px,-4px) rotate(-3deg); }
+    100%{ transform:translate(-50%,-50%) translate(0,0) rotate(0deg); }
+  }
+  @keyframes craneGlideBg{
+    0%,100%{ transform:translate(0,0) rotate(0deg); }
+    50%{ transform:translate(-3px,-5px) rotate(-4deg); }
+  }
+  @keyframes wingFlap{
+    0%{ transform:scaleY(1); }
+    28%{ transform:scaleY(0.6); }
+    52%{ transform:scaleY(1.08); }
+    74%{ transform:scaleY(0.88); }
+    100%{ transform:scaleY(1); }
+  }
+
+  /* -- check-in: a plant swaying, breathing, a little light drifting off it -- */
+  .room-stage-checkin{
+    background:
+      radial-gradient(ellipse at 50% 74%, rgba(245,242,251,0.07), transparent 68%),
+      linear-gradient(180deg, transparent 68%, rgba(5,4,13,0.42) 100%);
+  }
+  .room-icon.plant{
+    position:absolute; bottom:14px; left:50%;
+    width:34px; height:40px;
+    transform:translateX(-50%);
+    transform-box:fill-box;
+    transform-origin:50% 100%;
+    animation:plantSway 4.5s ease-in-out infinite;
+  }
+  .room-icon.plant .soil{ fill:var(--dim); }
+  .room-icon.plant .stem{ fill:none; stroke:var(--moonlight); stroke-width:2.2; transition:stroke 0.2s ease; }
+  .room-icon.plant .leaf, .room-icon.plant .petal, .room-icon.plant .flower-center{ fill:var(--moonlight); transition:fill 0.2s ease; }
+  .room-icon.plant .petal{ transform-box:fill-box; transform-origin:50% 50%; animation:petalPulse 3s ease-in-out infinite; }
+  .room-card:hover .room-icon.plant .stem{ stroke:var(--gold); }
+  .room-card:hover .room-icon.plant .leaf,
+  .room-card:hover .room-icon.plant .petal,
+  .room-card:hover .room-icon.plant .flower-center{ fill:var(--gold); }
+  @keyframes plantSway{
+    0%{ transform:translateX(-50%) rotate(-3deg); }
+    30%{ transform:translateX(-50%) rotate(2.5deg); }
+    55%{ transform:translateX(-50%) rotate(-1deg); }
+    80%{ transform:translateX(-50%) rotate(3deg); }
+    100%{ transform:translateX(-50%) rotate(-3deg); }
+  }
+  @keyframes petalPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+  .room-icon.plant .petal:nth-child(6){ animation-delay:0s; }
+  .room-icon.plant .petal:nth-child(7){ animation-delay:0.15s; }
+  .room-icon.plant .petal:nth-child(8){ animation-delay:0.3s; }
+  .room-icon.plant .petal:nth-child(9){ animation-delay:0.45s; }
+  .room-icon.plant .petal:nth-child(10){ animation-delay:0.6s; }
+  .plant-sparkle{
+    position:absolute;
+    bottom:52%; left:52%;
+    width:3px; height:3px;
+    border-radius:50%;
+    background:var(--moonlight);
+    opacity:0;
+    animation:sparkleRise 3.6s ease-in infinite;
+    animation-delay:1.6s;
+  }
+  @keyframes sparkleRise{
+    0%{ opacity:0; transform:translate(0,0) scale(0.6); }
+    18%{ opacity:0.8; }
+    70%{ opacity:0; transform:translate(-10px,-28px) scale(1); }
+    100%{ opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .mini-star, .room-icon.star-big, .shooting-star,
+    .crane-main, .crane-bg-1, .crane-bg-2, .crane-wing,
+    .room-icon.plant, .room-icon.plant .petal, .plant-sparkle{
+      animation:none !important;
+    }
+  }
 
   footer{
     position:relative;
@@ -290,37 +402,50 @@
 <div class="content">
   <div class="eyebrow">a sky for the two of us</div>
   <h1>Three small rituals, built out of <span class="accent">missing you</span>.</h1>
-  <p class="lede">Wherever you're headed — the stars, the reasons, or the garden — it all starts here, and it all leads back here too.</p>
+  <p class="lede">Pick a door.</p>
   <div class="stats-line" id="statsLine">counting…</div>
 
   <div class="rooms">
     <a class="room-card" href="sky.html">
-      <span class="room-icon-node"><span class="room-icon star" aria-hidden="true">&#10022;</span></span>
-      <span class="room-copy">
-        <span class="room-name">the sky</span>
-        <span class="room-desc">Tap, and a star goes up — one for every time one of you was missed.</span>
-      </span>
-      <svg class="room-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="room-stage room-stage-sky">
+        <span class="mini-star" style="top:18%; left:14%; width:2.5px; height:2.5px; --dur:3.4s; --delay:0s;"></span>
+        <span class="mini-star" style="top:65%; left:20%; width:2px; height:2px; --dur:2.8s; --delay:0.6s;"></span>
+        <span class="mini-star" style="top:25%; left:82%; width:2.5px; height:2.5px; --dur:3.6s; --delay:1.1s;"></span>
+        <span class="mini-star" style="top:72%; left:76%; width:2px; height:2px; --dur:3s; --delay:1.8s;"></span>
+        <span class="mini-star" style="top:12%; left:52%; width:2px; height:2px; --dur:2.6s; --delay:0.3s;"></span>
+        <span class="mini-star" style="top:82%; left:46%; width:2.5px; height:2.5px; --dur:3.8s; --delay:2.2s;"></span>
+        <span class="mini-star" style="top:45%; left:90%; width:2px; height:2px; --dur:3.2s; --delay:1.5s;"></span>
+        <span class="room-icon star-big" aria-hidden="true">&#10022;</span>
+        <span class="shooting-star" aria-hidden="true"></span>
+        <span class="shooting-star-2" aria-hidden="true"></span>
+      </div>
+      <div class="room-label">the sky</div>
     </a>
 
     <a class="room-card" href="reasons.html">
-      <span class="room-icon-node">
-        <svg class="room-icon crane" viewBox="-26 -24 60 48" width="30" height="24" aria-hidden="true">
-          <polygon points="-22,0 -6,-5 10,-3 26,0 10,3 -6,5"/>
+      <div class="room-stage room-stage-reasons">
+        <svg class="room-icon crane crane-bg crane-bg-1" viewBox="-26 -24 60 48" aria-hidden="true">
+          <g class="crane-wing"><polygon points="-22,0 -6,-5 10,-3 26,0 10,3 -6,5"/></g>
           <polygon points="-2,-3 4,-20 14,-4"/>
           <polygon points="-2,3 4,20 14,4"/>
         </svg>
-      </span>
-      <span class="room-copy">
-        <span class="room-name">reasons</span>
-        <span class="room-desc">Fold one a day. They pile up into a small flock that doesn't forget.</span>
-      </span>
-      <svg class="room-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="room-icon crane crane-bg crane-bg-2" viewBox="-26 -24 60 48" aria-hidden="true">
+          <g class="crane-wing"><polygon points="-22,0 -6,-5 10,-3 26,0 10,3 -6,5"/></g>
+          <polygon points="-2,-3 4,-20 14,-4"/>
+          <polygon points="-2,3 4,20 14,4"/>
+        </svg>
+        <svg class="room-icon crane crane-main" viewBox="-26 -24 60 48" aria-hidden="true">
+          <g class="crane-wing"><polygon points="-22,0 -6,-5 10,-3 26,0 10,3 -6,5"/></g>
+          <polygon points="-2,-3 4,-20 14,-4"/>
+          <polygon points="-2,3 4,20 14,4"/>
+        </svg>
+      </div>
+      <div class="room-label">reasons</div>
     </a>
 
     <a class="room-card" href="checkin.html">
-      <span class="room-icon-node">
-        <svg class="room-icon plant" viewBox="-20 -42 40 48" width="26" height="30" aria-hidden="true">
+      <div class="room-stage room-stage-checkin">
+        <svg class="room-icon plant" viewBox="-20 -42 40 48" aria-hidden="true">
           <ellipse class="soil" cx="0" cy="2" rx="15" ry="4"/>
           <line class="stem" x1="0" y1="0" x2="0" y2="-26" stroke-linecap="round"/>
           <ellipse class="leaf" cx="6" cy="-6.5" rx="6" ry="2.6" transform="rotate(35 6 -6.5)"/>
@@ -333,12 +458,9 @@
           <ellipse class="petal" cx="0" cy="-34" rx="4" ry="7" transform="rotate(288 0 -26)"/>
           <circle class="flower-center" cx="0" cy="-26" r="3.2"/>
         </svg>
-      </span>
-      <span class="room-copy">
-        <span class="room-name">check-in</span>
-        <span class="room-desc">A little garden for the unglamorous stuff — water, sleep, showing up.</span>
-      </span>
-      <svg class="room-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="plant-sparkle" aria-hidden="true"></span>
+      </div>
+      <div class="room-label">check-in</div>
     </a>
   </div>
 
@@ -406,10 +528,18 @@ async function loadStats(){
     if(starCount) parts.push(`${starCount} star${starCount===1?'':'s'}`);
     if(reasonCount) parts.push(`${reasonCount} reason${reasonCount===1?'':'s'}`);
     if(habitCount) parts.push(`${habitCount} thing${habitCount===1?'':'s'} growing`);
-    statsEl.textContent = parts.join(' \u00b7 ');
+    statsEl.style.opacity = '0';
+    setTimeout(() => {
+      statsEl.textContent = parts.join(' \u00b7 ');
+      statsEl.style.opacity = '1';
+    }, 220);
   } catch(err){
     console.error('Could not load stats:', err);
-    statsEl.textContent = '';
+    statsEl.style.opacity = '0';
+    setTimeout(() => {
+      statsEl.textContent = '';
+      statsEl.style.opacity = '1';
+    }, 220);
   }
 }
 loadStats();
