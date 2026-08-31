@@ -166,10 +166,11 @@
   .content.enter .room-card:nth-child(1){ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.5s backwards; }
   .content.enter .room-card:nth-child(2){ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.6s backwards; }
   .content.enter .room-card:nth-child(3){ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.7s backwards; }
-  .content.enter footer{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.82s backwards; }
+  .content.enter .today-section{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.78s backwards; }
+  .content.enter footer{ animation:heroPiece 0.8s cubic-bezier(.16,1,.3,1) 0.9s backwards; }
   @media (prefers-reduced-motion: reduce){
     .content.enter .eyebrow, .content.enter h1, .content.enter .lede,
-    .content.enter .stats-line, .content.enter .room-card, .content.enter footer{
+    .content.enter .stats-line, .content.enter .room-card, .content.enter .today-section, .content.enter footer{
       animation:none !important;
     }
   }
@@ -379,6 +380,43 @@
     }
   }
 
+  /* -- today feed -- */
+  .today-section{ margin-top:2.4rem; text-align:left; }
+  .today-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--dim);
+    margin-bottom:0.7rem;
+    text-align:center;
+  }
+  .today-feed{ display:flex; flex-direction:column; gap:0.55rem; }
+  .feed-item{
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+    font-size:0.82rem;
+    padding:0.1rem 0;
+  }
+  .feed-icon{
+    flex-shrink:0;
+    width:20px;
+    text-align:center;
+    font-size:0.95rem;
+    line-height:1;
+    color:var(--moonlight);
+  }
+  .feed-crane{ width:16px; height:13px; display:inline-block; vertical-align:middle; }
+  .feed-crane polygon{ fill:currentColor; }
+  .feed-text{ flex:1; color:var(--moonlight); }
+  .feed-time{
+    flex-shrink:0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.66rem;
+    color:var(--dim);
+  }
+
   footer{
     position:relative;
     text-align:center;
@@ -464,11 +502,19 @@
     </a>
   </div>
 
+  <div class="today-section" id="todaySection">
+    <div class="today-label">today</div>
+    <div class="today-feed" id="todayFeed">checking on today&hellip;</div>
+  </div>
+
   <footer>by your favorite spouse, inno</footer>
 </div>
 
 <script type="module">
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NAME_A = 'Inno';
+const NAME_B = 'Yuki';
+function nameFor(who){ return who === 'A' ? NAME_A : NAME_B; }
 
 /* ---- ambient starfield ---- */
 (function(){
@@ -491,26 +537,38 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 /* ---- staged entrance ---- */
 document.querySelector('.content').classList.add('enter');
 
-/* ---- live counts, best-effort — Firebase is loaded lazily in here so a
-   blocked/slow CDN can only ever affect this line, never the page above ---- */
+/* ---- shared Firebase access, loaded lazily and initialized exactly once —
+   a blocked/slow CDN can only ever affect the stats line and today feed
+   below, never the page above, and calling this from two places can't
+   accidentally initialize the app twice ---- */
+let dbPromise = null;
+function getDb(){
+  if(!dbPromise){
+    dbPromise = (async () => {
+      const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+      const { getDatabase } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js');
+      const firebaseConfig = {
+        apiKey: "AIzaSyDo6kwf9QtiLXCelZDSy_a6ktv6mTC6fa4",
+        authDomain: "oursky-1b847.firebaseapp.com",
+        databaseURL: "https://oursky-1b847-default-rtdb.firebaseio.com",
+        projectId: "oursky-1b847",
+        storageBucket: "oursky-1b847.firebasestorage.app",
+        messagingSenderId: "1029333881661",
+        appId: "1:1029333881661:web:0ffef5df392bc984c7ab54"
+      };
+      const app = initializeApp(firebaseConfig);
+      return getDatabase(app);
+    })();
+  }
+  return dbPromise;
+}
+
+/* ---- live counts, best-effort ---- */
 const statsEl = document.getElementById('statsLine');
 async function loadStats(){
   try{
-    const [{ initializeApp }, { getDatabase, ref, get }] = await Promise.all([
-      import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js'),
-      import('https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js')
-    ]);
-    const firebaseConfig = {
-      apiKey: "AIzaSyDo6kwf9QtiLXCelZDSy_a6ktv6mTC6fa4",
-      authDomain: "oursky-1b847.firebaseapp.com",
-      databaseURL: "https://oursky-1b847-default-rtdb.firebaseio.com",
-      projectId: "oursky-1b847",
-      storageBucket: "oursky-1b847.firebasestorage.app",
-      messagingSenderId: "1029333881661",
-      appId: "1:1029333881661:web:0ffef5df392bc984c7ab54"
-    };
-    const firebaseApp = initializeApp(firebaseConfig);
-    const db = getDatabase(firebaseApp);
+    const { ref, get } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js');
+    const db = await getDb();
 
     const [entriesSnap, reasonsSnap, habitsSnap] = await Promise.all([
       get(ref(db, 'entries')),
@@ -543,6 +601,83 @@ async function loadStats(){
   }
 }
 loadStats();
+
+/* ---- today feed — pulls the real, precisely-timestamped events (a star
+   added, a reason folded, a cheer given) and shows the most recent ones.
+   Habit check-ins are stored per-day with no time-of-day attached, so they
+   can't honestly be interleaved into a precise timeline — this stays
+   scoped to the three signals that actually carry a timestamp. ---- */
+const CRANE_MINI = '<svg viewBox="-26 -24 60 48"><polygon points="-22,0 -6,-5 10,-3 26,0 10,3 -6,5"/><polygon points="-2,-3 4,-20 14,-4"/><polygon points="-2,3 4,20 14,4"/></svg>';
+function feedIcon(kind, color){
+  if(kind === 'star') return '<span class="feed-icon" aria-hidden="true">&#10022;</span>';
+  if(kind === 'reason') return `<span class="feed-icon" style="color:${color}" aria-hidden="true">${CRANE_MINI.replace('<svg ', '<svg class="feed-crane" ')}</span>`;
+  return '<span class="feed-icon" aria-hidden="true">&#9825;</span>';
+}
+function relTime(ms){
+  const mins = Math.floor((Date.now() - ms) / 60000);
+  if(mins < 1) return 'just now';
+  if(mins < 60) return mins + 'm ago';
+  const hours = Math.floor(mins / 60);
+  if(hours < 24) return hours + 'h ago';
+  return 'today';
+}
+
+async function loadTodayFeed(){
+  const feedEl = document.getElementById('todayFeed');
+  const sectionEl = document.getElementById('todaySection');
+  try{
+    const { ref, get } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js');
+    const db = await getDb();
+
+    const [entriesSnap, reasonsSnap, cheersSnap] = await Promise.all([
+      get(ref(db, 'entries')),
+      get(ref(db, 'reasons')),
+      get(ref(db, 'cheers'))
+    ]);
+    const entries = entriesSnap.val() || {};
+    const reasons = reasonsSnap.val() || {};
+    const cheers = cheersSnap.val() || {};
+
+    const todayStart = new Date();
+    todayStart.setHours(0,0,0,0);
+    const cutoff = todayStart.getTime();
+
+    const items = [];
+    Object.values(entries).forEach(e=>{
+      if(typeof e.time === 'number' && e.time >= cutoff){
+        items.push({ time: e.time, html: feedIcon('star') + `<span class="feed-text">${nameFor(e.who)} added a star</span>` });
+      }
+    });
+    Object.values(reasons).forEach(r=>{
+      if(typeof r.time === 'number' && r.time >= cutoff){
+        const color = r.author === 'A' ? '#f0c169' : '#dd8291';
+        items.push({ time: r.time, html: feedIcon('reason', color) + `<span class="feed-text">${nameFor(r.author)} folded a reason</span>` });
+      }
+    });
+    Object.keys(cheers).forEach(owner=>{
+      Object.values(cheers[owner] || {}).forEach(dates=>{
+        Object.values(dates || {}).forEach(c=>{
+          if(c && typeof c.time === 'number' && c.time >= cutoff){
+            items.push({ time: c.time, html: feedIcon('cheer') + `<span class="feed-text">${nameFor(c.from)} cheered ${nameFor(owner)} on</span>` });
+          }
+        });
+      });
+    });
+
+    items.sort((a,b)=>b.time-a.time);
+    const top = items.slice(0,6);
+
+    if(top.length === 0){
+      sectionEl.style.display = 'none';
+      return;
+    }
+    feedEl.innerHTML = top.map(it=>`<div class="feed-item">${it.html}<span class="feed-time">${relTime(it.time)}</span></div>`).join('');
+  } catch(err){
+    console.error('Could not load today feed:', err);
+    sectionEl.style.display = 'none';
+  }
+}
+loadTodayFeed();
 </script>
 
 </body>

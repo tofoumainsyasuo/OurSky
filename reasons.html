@@ -301,6 +301,7 @@
 <div class="menu-panel" id="menuPanel">
   <button type="button" class="menu-item" id="menuAdd">Add a reason</button>
   <button type="button" class="menu-item" id="menuYours">See yours</button>
+  <button type="button" class="menu-item" id="menuExportFlock">Save flock as image</button>
 </div>
 
 <div class="modal-backdrop" id="identityBackdrop">
@@ -544,6 +545,91 @@ document.getElementById('menuYours').addEventListener('click', ()=>{
 });
 document.getElementById('yoursClose').addEventListener('click', ()=>yoursBackdrop.classList.remove('show'));
 yoursBackdrop.addEventListener('click', (e)=>{ if(e.target === yoursBackdrop) yoursBackdrop.classList.remove('show'); });
+
+document.getElementById('menuExportFlock').addEventListener('click', ()=>{
+  menuPanel.classList.remove('show');
+  exportFlockImage();
+});
+
+function drawCrane(ctx, cx, cy, rotDeg, color){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(rotDeg * Math.PI/180);
+  ctx.scale(0.55, 0.55);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(-22,0); ctx.lineTo(-6,-5); ctx.lineTo(10,-3); ctx.lineTo(26,0); ctx.lineTo(10,3); ctx.lineTo(-6,5);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(-2,-3); ctx.lineTo(4,-20); ctx.lineTo(14,-4);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(-2,3); ctx.lineTo(4,20); ctx.lineTo(14,4);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function exportFlockImage(){
+  const who = getIdentity();
+  if(!who){ openIdentityModal(); return; }
+  const seen = getSeenIds();
+  const flock = reasonsCache.filter(r => r.author !== who && seen.has(r.id)).sort((a,b)=>a.time-b.time);
+  if(flock.length === 0){
+    showToast('Nothing folded yet to save');
+    return;
+  }
+
+  const areaWidth = flockArea.clientWidth || 320;
+  const cols = Math.max(3, Math.floor(areaWidth / 78));
+  const rows = Math.ceil(flock.length / cols);
+  const width = areaWidth;
+  const height = Math.max(rows * 66 + 50, 220);
+
+  const scale = 2;
+  const ec = document.createElement('canvas');
+  ec.width = width * scale; ec.height = height * scale;
+  const ex = ec.getContext('2d');
+  ex.scale(scale, scale);
+
+  const bgGrad = ex.createLinearGradient(0,0,0,height);
+  bgGrad.addColorStop(0, '#100c26');
+  bgGrad.addColorStop(1, '#05040d');
+  ex.fillStyle = bgGrad;
+  ex.fillRect(0,0,width,height);
+
+  function blob(cx,cy,radius,rgb,opacity){
+    const g = ex.createRadialGradient(cx,cy,0,cx,cy,radius);
+    g.addColorStop(0, 'rgba('+rgb+','+opacity+')');
+    g.addColorStop(1, 'rgba('+rgb+',0)');
+    ex.fillStyle = g;
+    ex.beginPath(); ex.arc(cx,cy,radius,0,Math.PI*2); ex.fill();
+  }
+  blob(width*0.9, height*-0.05, Math.max(width,height)*0.6, '240,193,105', 0.16);
+  blob(width*0.05, height*1.05, Math.max(width,height)*0.6, '221,130,145', 0.16);
+
+  flock.forEach((r,i)=>{
+    const col = i % cols;
+    const row = Math.floor(i/cols);
+    const jitterX = (seededRandom(i*2+1)-0.5) * 22;
+    const jitterY = (seededRandom(i*2+2)-0.5) * 18;
+    const rot = (seededRandom(i*2+3)-0.5) * 44;
+    const x = col * (width/cols) + (width/cols)/2 - 21 + jitterX;
+    const y = row * 66 + 18 + jitterY;
+    const color = r.author === 'A' ? '#f0c169' : '#dd8291';
+    drawCrane(ex, x+21, y+13, rot, color);
+  });
+
+  ec.toBlob(b=>{
+    const url = URL.createObjectURL(b);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'our-flock-' + new Date().toISOString().slice(0,10) + '.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  });
+}
 
 function showCraneTooltip(el, reason){
   const tip = document.getElementById('craneTip');
